@@ -8,4 +8,5 @@ plugins {
     id("kotlin-android")
     id("basic-kotlin-convention")
     id("kotlin-kapt")
+    id("ktlint-convention")
 }

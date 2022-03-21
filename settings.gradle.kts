@@ -13,7 +13,6 @@ dependencyResolutionManagement {
 }
 
 pluginManagement {
-
     repositories {
         google()
         mavenCentral()
@@ -23,10 +22,10 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             val pluginId = requested.id.id
-            if (pluginId.startsWith("org.jetbrains.kotlin")) {
-                useVersion("1.6.10")
-            } else if (requested.id.id.startsWith("com.android.")) {
-                useVersion("7.1.0")
+            when {
+                pluginId.startsWith("org.jetbrains.kotlin") -> useVersion("1.6.10")
+                pluginId.startsWith("com.android.") -> useVersion("7.1.0")
+                pluginId == "org.jlleitschuh.gradle.ktlint" -> useVersion("10.2.1")
             }
         }
     }
