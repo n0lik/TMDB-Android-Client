@@ -21,6 +21,8 @@ __There are basic plugins:__
 * [basic-kotlin-convention plugin](/build-logic/src/main/kotlin/basic-kotlin-convention.gradle.kts) -
   applies __Kotlin's compile configuration__ to each modules;
 * [kotlin-jvm-convention plugin](/build-logic/src/main/kotlin/kotlin-jvm-convention.gradle.kts) -
-  uses for configuring __Kotlin__ in modules.
+  uses for configuring __Kotlin__ in modules;
+* [ktlint-convention plugin](/build-logic/src/main/kotlin/ktlint-convention.gradle.kts) -
+  uses for configuring [ktlint plugin](https://github.com/JLLeitschuh/ktlint-gradle) in modules.
 
 Have a good coding:)

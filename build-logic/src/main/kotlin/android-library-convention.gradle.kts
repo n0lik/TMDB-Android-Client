@@ -7,4 +7,5 @@ plugins {
     id("basic-android-convention")
     id("kotlin-android")
     id("basic-kotlin-convention")
+    id("ktlint-convention")
 }
