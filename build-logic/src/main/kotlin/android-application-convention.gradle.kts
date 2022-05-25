@@ -9,4 +9,5 @@ plugins {
     id("basic-kotlin-convention")
     id("kotlin-kapt")
     id("ktlint-convention")
+    id("jacoco-convention")
 }

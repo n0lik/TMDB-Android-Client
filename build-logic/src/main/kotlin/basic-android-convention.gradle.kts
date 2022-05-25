@@ -4,6 +4,7 @@
  * The specific setups must be added in specific module.
  */
 import com.android.build.gradle.BaseExtension
+import com.android.builder.internal.BaseConfigImpl
 
 configure<BaseExtension> {
 
@@ -11,7 +12,7 @@ configure<BaseExtension> {
     buildToolsVersion = "32.0.0"
 
     defaultConfig {
-        minSdk = 19
+        minSdk = 21
         setTargetSdkVersion(32)
 
         versionCode = 1
@@ -20,8 +21,22 @@ configure<BaseExtension> {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    viewBinding {
+        isEnabled = true
+    }
+
     buildTypes {
+
         getByName("release") {
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+
+        getByName("debug") {
+            addApplicationSuffixId(".debug")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -29,14 +44,12 @@ configure<BaseExtension> {
             )
         }
     }
+}
 
-    buildTypes {
-        getByName("debug") {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
+fun BaseConfigImpl.addApplicationSuffixId(
+    suffixId: String
+) {
+    plugins.withId("com.android.application") {
+        applicationIdSuffix(suffixId)
     }
 }
