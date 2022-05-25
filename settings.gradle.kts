@@ -1,8 +1,18 @@
-rootProject.name = "Sample"
+rootProject.name = "TMDB Android Client"
 
 includeBuild("build-logic")
 
-include("app")
+include(
+    ":app",
+    ":movie-api",
+    ":movie-impl",
+    ":common-api",
+    ":common-impl",
+    ":common-ui",
+    ":genres-api",
+    ":genres-impl",
+    ":common-test"
+)
 
 /**
  * All libs' versions has been declared in the project's file (/gradle/libs.versions.toml)
@@ -11,16 +21,16 @@ include("app")
  */
 dependencyResolutionManagement {
     repositories {
+        gradlePluginPortal()
         google()
         mavenCentral()
-        gradlePluginPortal()
     }
 }
 pluginManagement {
     repositories {
+        gradlePluginPortal()
         google()
         mavenCentral()
-        gradlePluginPortal()
     }
 
     resolutionStrategy {
@@ -29,8 +39,8 @@ pluginManagement {
             when {
                 pluginId.contains("kotlin-dsl") -> useVersion("1.6.10")
                 pluginId.startsWith("org.jetbrains.kotlin") -> useVersion("1.6.10")
-                pluginId.startsWith("com.android.") -> useVersion("7.1.2")
-                pluginId == "org.jlleitschuh.gradle.ktlint" -> useVersion("10.2.1")
+                pluginId.startsWith("com.android.") -> useVersion("7.2.1")
+                pluginId == "org.jlleitschuh.gradle.ktlint" -> useVersion("10.3.0")
             }
         }
     }
