@@ -1,11 +1,30 @@
-## Sample project
+# TMDB Android Client
 
-Hi anyone! This is my pet project. It will be supported by me at free time.
+Welcome to my pet project. It will be supported by me at free time.
 
-## Goal
+This project exposes ideas, approaches and its implementations.
 
-Sharing ideas, approaches and its implementations with community.
+### Libraries
 
+-  [Coroutines](https://kotlinlang.org/docs/coroutines-overview.html)
+-  [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel)
+-  [Paging3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview)
+-  [NavComponent](https://developer.android.com/guide/navigation/navigation-getting-started)
+-  [Ktor](https://ktor.io/docs/welcome.html)
+-  [Retrofit](https://square.github.io/retrofit/)
+-  [kotlin-serialization](https://kotlinlang.org/docs/serialization.html)
+-  [Moshi](https://github.com/square/moshi)
+-  [Dagger2](https://dagger.dev/)
+-  [Mockk](https://mockk.io/)
+-  [Glide](https://bumptech.github.io/glide/)
+
+### Settings
+
+If you desire to try this app, you have to do few steps:  
+1. remove suffix *.example* for the file `api-config.properties.example`
+2. add API key to the file.
+
+If you don't have it, you'll be able generate it [there](https://developers.themoviedb.org/3)
 ### Gradle configuration
 
 The main idea is to separate project build logic using [gradle plugins](https://docs.gradle.org/current/userguide/plugins.html).
@@ -24,9 +43,10 @@ __There are basic plugins:__
   uses for configuring __Kotlin__ in modules;
 * [ktlint-convention plugin](/build-logic/src/main/kotlin/ktlint-convention.gradle.kts) -
   uses for configuring [ktlint plugin](https://github.com/JLLeitschuh/ktlint-gradle) in modules.
+* [jacoco-convention plugin](/build-logic/src/main/kotlin/jacoco-convention.gradle.kts) -
+  uses for configuring [jacoco plugin](https://docs.gradle.org/current/userguide/jacoco_plugin.html) in modules.
 
-__Gradle Version Catalog__
-
+### Gradle Version Catalog
 Read official documentation [here](https://docs.gradle.org/current/userguide/platforms.html).
 > Note!  
 > Version catalog don't accessible from precompiled script plugins  
@@ -41,5 +61,7 @@ dependencies {
     implementation(libs.{your_dependency_name})
 }
 ```
+### Tests
+[MockKtorHttpClient](/common-test/src/main/java/com/n0lik/common/test/ktor/MockKtorHttpClient.kt) - solution for __mocking responses__ over [Ktor](https://ktor.io/docs/http-client-testing.html) library.
 
 Have a good coding:)

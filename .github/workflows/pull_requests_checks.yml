@@ -2,7 +2,7 @@ name: pull-requests-checks
 
 on:
   pull_request:
-    branches: 
+    branches:
     - master
     - develop
 
@@ -13,11 +13,24 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    environment: Test
+      # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+
+#      - name: Test environment
+#        env:
+#            TMDB_CONFIG_FILE_NAME: '${{ secrets.TMDB_CONFIG_FILE_NAME }}'
+#            DROPDOX_TOKEN: '${{ secrets.DROPDOX_TOKEN }}
+#        run:
+#          echo ${{ secrets.TEST_PARAM }}
+
+      - name: Download and apply credentials
+        env:
+            TMDB_CONFIG_FILE_NAME: ${{ secrets.TMDB_CONFIG_FILE_NAME }}
+            DROPDOX_TOKEN: ${{ secrets.DROPDOX_TOKEN }}
+        run: sudo chmod +x ./ci-config/get-api-config.sh && ./ci-config/get-api-config.sh
 
       - name: Run ktlintCheck
         run: ./gradlew ktlintCheck
