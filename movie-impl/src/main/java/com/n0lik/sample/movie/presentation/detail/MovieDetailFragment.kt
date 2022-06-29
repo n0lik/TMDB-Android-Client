@@ -42,13 +42,15 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
         lifecycleScope.launchWhenCreated {
             viewModel.viewState.collect {
                 with(binding) {
-                    movieHeaderImage.loadImage(it.posterUrl) {
-                        cropOptions = CropOptions.CenterCrop
-                        this
-                    }
-                    moviePoster.loadImage(it.posterUrl) {
-                        cornerRadius = posterCornerRadius
-                        this
+                    it.posterUrl?.also { url ->
+                        movieHeaderImage.loadImage(url) {
+                            cropOptions = CropOptions.CenterCrop
+                            this
+                        }
+                        moviePoster.loadImage(url) {
+                            cornerRadius = posterCornerRadius
+                            this
+                        }
                     }
                     movieTitle.text = it.title
                     movieDescription.text = it.overview

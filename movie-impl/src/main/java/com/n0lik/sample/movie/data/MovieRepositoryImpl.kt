@@ -15,7 +15,7 @@ constructor(
 ) : MovieRepository {
 
     override suspend fun getMovie(movieId: Movie.Id): Movie? {
-        return withContext(dispatcher.IO) {
+        return withContext(dispatcher.io) {
             movieApi.getMovieById(movieId.id)?.let {
                 movieMapper.mapTo(it)
             }
@@ -23,7 +23,7 @@ constructor(
     }
 
     override suspend fun getSimilarMovies(movieId: Movie.Id): List<Movie> {
-        return withContext(dispatcher.IO) {
+        return withContext(dispatcher.io) {
             movieApi.getSimilarMovies(movieId = movieId.id).let {
                 movieMapper.mapToList(it.data)
             }

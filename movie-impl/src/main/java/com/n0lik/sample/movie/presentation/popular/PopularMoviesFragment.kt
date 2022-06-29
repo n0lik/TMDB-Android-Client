@@ -72,7 +72,12 @@ class PopularMoviesFragment @Inject constructor() : Fragment(R.layout.popular_mo
     private fun setupUi() {
         binding.popularMoviesList.apply {
             layoutManager = GridLayoutManager(context, GRID_SIZE)
-            addItemDecoration(GridDecoration(32, GRID_SIZE))
+            addItemDecoration(
+                GridDecoration(
+                    resources.getDimensionPixelSize(R.dimen.popular_fragment_grid_margin),
+                    GRID_SIZE
+                )
+            )
             adapter = movieAdapter.withLoadStateFooter(
                 PagingLoadStateAdapter(movieAdapter)
             )

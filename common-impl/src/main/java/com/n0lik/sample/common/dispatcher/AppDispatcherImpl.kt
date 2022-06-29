@@ -7,8 +7,8 @@ import kotlinx.coroutines.Dispatchers
 internal class AppDispatcherImpl
 @Inject constructor() : AppDispatcher {
 
-    override val IO: CoroutineDispatcher = Dispatchers.IO
-    override val Main: CoroutineDispatcher = Dispatchers.Main
-    override val Default: CoroutineDispatcher = Dispatchers.Default
-    override val Unconfined: CoroutineDispatcher = Dispatchers.Unconfined
+    override val io: CoroutineDispatcher = Dispatchers.IO
+    override val main: CoroutineDispatcher = Dispatchers.Main
+    override val default: CoroutineDispatcher = Dispatchers.Default
+    override val unconfined: CoroutineDispatcher = Dispatchers.Unconfined
 }

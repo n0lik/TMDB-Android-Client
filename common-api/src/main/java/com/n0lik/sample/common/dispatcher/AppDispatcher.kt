@@ -4,11 +4,11 @@ import kotlinx.coroutines.CoroutineDispatcher
 
 interface AppDispatcher {
 
-    val IO: CoroutineDispatcher
+    val io: CoroutineDispatcher
 
-    val Main: CoroutineDispatcher
+    val main: CoroutineDispatcher
 
-    val Default: CoroutineDispatcher
+    val default: CoroutineDispatcher
 
-    val Unconfined: CoroutineDispatcher
+    val unconfined: CoroutineDispatcher
 }
