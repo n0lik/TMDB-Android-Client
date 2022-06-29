@@ -8,6 +8,7 @@ import dagger.Component
 
 @Component(
     modules = [
+        MovieApiModule::class,
         MovieMapperModule::class,
         MovieDetailModule::class,
         ViewModelFactoryModule::class,
@@ -18,7 +19,7 @@ import dagger.Component
         GenreDependency::class
     ]
 )
-interface MovieDetailComponent : MovieDependency {
+interface MovieDetailComponent {
 
     fun inject(fragment: MovieDetailFragment)
 

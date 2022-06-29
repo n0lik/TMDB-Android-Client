@@ -6,17 +6,18 @@ import com.n0lik.sample.movie.data.api.MovieApi
 import com.n0lik.sample.movie.data.api.dto.MovieDto
 import com.n0lik.sample.movie.model.Movie
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 internal class MovieRepositoryImpl
-constructor(
+@Inject constructor(
     private val dispatcher: AppDispatcher,
     private val movieApi: MovieApi,
     private val movieMapper: MapperTo<MovieDto, Movie>
 ) : MovieRepository {
 
-    override suspend fun getMovie(movieId: Movie.Id): Movie? {
+    override suspend fun getMovie(movieId: Movie.Id): Movie {
         return withContext(dispatcher.io) {
-            movieApi.getMovieById(movieId.id)?.let {
+            movieApi.getMovieById(movieId.id).let {
                 movieMapper.mapTo(it)
             }
         }

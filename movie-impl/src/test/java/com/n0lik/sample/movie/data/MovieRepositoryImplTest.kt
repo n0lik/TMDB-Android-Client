@@ -1,25 +1,24 @@
 package com.n0lik.sample.movie.data
 
 import com.n0lik.common.test.dispatcher.TestAppDispatcher
+import com.n0lik.common.test.response.CONTENT_NOT_FOUND_JSON
+import com.n0lik.common.test.response.toResponseBody
 import com.n0lik.sample.movie.data.api.MovieApi
 import com.n0lik.sample.movie.data.api.dto.MovieDto
 import com.n0lik.sample.movie.data.api.dto.PagedListDto
 import com.n0lik.sample.movie.mapper.MovieMapper
 import com.n0lik.sample.movie.model.Movie
-import io.mockk.Called
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
-import java.net.UnknownHostException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertThrows
 import org.junit.Test
+import retrofit2.HttpException
+import retrofit2.Response
 
 @ExperimentalCoroutinesApi
 class MovieRepositoryImplTest {
@@ -48,28 +47,13 @@ class MovieRepositoryImplTest {
         }
     }
 
-    @Test
-    fun `should return null when movie doesn't exist`() = runTest {
-        coEvery { movieApiMock.getMovieById(1) } returns null
+    @Test(expected = HttpException::class)
+    fun `should throw exception when movie doesn't exist`() = runTest {
+        coEvery {
+            movieApiMock.getMovieById(1)
+        } throws HttpException(Response.error<MovieDto>(404, CONTENT_NOT_FOUND_JSON.toResponseBody()))
 
-        val actual = repository.getMovie(Movie.Id(1))
-
-        assertNull(actual)
-        coVerify { movieApiMock.getMovieById(1) }
-        verify { movieMapper.mapTo(any()) wasNot Called }
-    }
-
-    @Test
-    fun `should throw exception when load movie by id`() {
-        coEvery { movieApiMock.getMovieById(1) } throws UnknownHostException()
-
-        assertThrows(UnknownHostException::class.java) {
-            runTest {
-                repository.getMovie(Movie.Id(1))
-            }
-        }
-
-        verify(exactly = 0) { movieMapper.mapTo(any()) }
+        repository.getMovie(Movie.Id(1))
     }
 
     @Test

@@ -19,6 +19,7 @@ dependencies {
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.navUi)
     implementation(libs.androidx.navFragment)
+    implementation(libs.androidx.swipe)
 
     implementation(libs.paging.runtime)
 

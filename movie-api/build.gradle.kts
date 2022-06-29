@@ -7,6 +7,7 @@ dependencies {
     implementation(project(":common-api"))
     implementation(project(":genres-api"))
     implementation(libs.androidx.core)
+
     implementation(libs.paging.runtime)
     implementation(libs.dagger.core)
 

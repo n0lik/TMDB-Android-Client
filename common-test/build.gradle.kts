@@ -9,4 +9,6 @@ dependencies {
     implementation(libs.ktor.mock)
     implementation(libs.ktor.content)
     implementation(libs.ktor.serialization)
+
+    implementation(libs.retrofit.core)
 }

@@ -20,7 +20,7 @@ internal interface MovieApi {
     @GET("3/movie/{movieId}")
     suspend fun getMovieById(
         @Path("movieId") movieId: Int
-    ): MovieDto?
+    ): MovieDto
 
     @GET("3/movie/{movieId}/similar")
     suspend fun getSimilarMovies(
