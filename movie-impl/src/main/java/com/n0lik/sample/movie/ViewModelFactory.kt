@@ -13,11 +13,13 @@ class ViewModelFactory
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val creator =
-            creators[modelClass] ?: throw RuntimeException("Factory for viewModel $modelClass IS NOT provided!!!")
+            creators[modelClass] ?: throw IllegalStateException("Factory for viewModel $modelClass IS NOT provided!!!")
         try {
             return creator.get() as T
-        } catch (e: Exception) {
-            throw RuntimeException(e)
+        } catch (e: ClassCastException) {
+            throw ViewModelFactoryException(e)
         }
     }
 }
+
+class ViewModelFactoryException(cause: Throwable) : RuntimeException(cause)

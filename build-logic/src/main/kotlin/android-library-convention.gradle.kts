@@ -7,7 +7,7 @@ plugins {
     id("basic-android-convention")
     id("kotlin-android")
     id("basic-kotlin-convention")
-    id("ktlint-convention")
+    id("detekt-convention")
     id("kotlin-kapt")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("jacoco-convention")

@@ -16,7 +16,7 @@ internal class GenreRepositoryImpl
 ) : GenreRepository {
 
     override suspend fun getGenres(): List<Genre> {
-        return withContext(dispatcher.IO) {
+        return withContext(dispatcher.io) {
             genresApi.getMovieGenres().let {
                 mapper.mapToList(it.genres)
             }

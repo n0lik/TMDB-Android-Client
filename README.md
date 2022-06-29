@@ -41,8 +41,8 @@ __There are basic plugins:__
   applies __Kotlin's compile configuration__ to each modules;
 * [kotlin-jvm-convention plugin](/build-logic/src/main/kotlin/kotlin-jvm-convention.gradle.kts) -
   uses for configuring __Kotlin__ in modules;
-* [ktlint-convention plugin](/build-logic/src/main/kotlin/ktlint-convention.gradle.kts) -
-  uses for configuring [ktlint plugin](https://github.com/JLLeitschuh/ktlint-gradle) in modules.
+* [detekt-convention plugin](/build-logic/src/main/kotlin/detekt-convention.gradle.kts) -
+  uses for configuring [detekt plugin](https://detekt.dev/docs/gettingstarted/gradle/) in modules.
 * [jacoco-convention plugin](/build-logic/src/main/kotlin/jacoco-convention.gradle.kts) -
   uses for configuring [jacoco plugin](https://docs.gradle.org/current/userguide/jacoco_plugin.html) in modules.
 

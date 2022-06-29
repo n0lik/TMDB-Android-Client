@@ -5,8 +5,8 @@ import kotlinx.coroutines.Dispatchers
 
 class TestAppDispatcher : AppDispatcher {
 
-    override val IO = Dispatchers.Unconfined
-    override val Main = Dispatchers.Unconfined
-    override val Default = Dispatchers.Unconfined
-    override val Unconfined = Dispatchers.Unconfined
+    override val io = Dispatchers.Unconfined
+    override val main = Dispatchers.Unconfined
+    override val default = Dispatchers.Unconfined
+    override val unconfined = Dispatchers.Unconfined
 }

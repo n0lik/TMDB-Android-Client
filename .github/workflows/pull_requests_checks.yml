@@ -19,21 +19,14 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-#      - name: Test environment
-#        env:
-#            TMDB_CONFIG_FILE_NAME: '${{ secrets.TMDB_CONFIG_FILE_NAME }}'
-#            DROPDOX_TOKEN: '${{ secrets.DROPDOX_TOKEN }}
-#        run:
-#          echo ${{ secrets.TEST_PARAM }}
-
       - name: Download and apply credentials
         env:
             TMDB_CONFIG_FILE_NAME: ${{ secrets.TMDB_CONFIG_FILE_NAME }}
             DROPDOX_TOKEN: ${{ secrets.DROPDOX_TOKEN }}
         run: sudo chmod +x ./ci-config/get-api-config.sh && ./ci-config/get-api-config.sh
 
-      - name: Run ktlintCheck
-        run: ./gradlew ktlintCheck
+      - name: Run detekt check
+        run: ./gradlew detekt
 
       - name: Run tests
         run: ./gradlew test

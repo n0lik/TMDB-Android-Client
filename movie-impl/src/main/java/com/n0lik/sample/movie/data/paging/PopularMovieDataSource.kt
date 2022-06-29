@@ -8,6 +8,7 @@ import com.n0lik.sample.movie.data.api.START_PAGE_NUMBER
 import com.n0lik.sample.movie.data.api.dto.MovieDto
 import com.n0lik.sample.movie.data.api.dto.PagedListDto
 import com.n0lik.sample.movie.model.Movie
+import io.ktor.utils.io.errors.IOException
 
 internal class PopularMovieDataSource constructor(
     private val movieApi: MovieKtorApi,
@@ -24,8 +25,8 @@ internal class PopularMovieDataSource constructor(
             val response = movieApi.getPopularMovies(pageNumber)
 
             mapper.mapTo(response)
-        } catch (t: Throwable) {
-            LoadResult.Error(t)
+        } catch (e: IOException) {
+            LoadResult.Error(e)
         }
     }
 

@@ -4,12 +4,11 @@ import androidx.lifecycle.viewModelScope
 import com.n0lik.sample.common.ui.CommonViewModel
 import com.n0lik.sample.movie.data.MovieRepository
 import com.n0lik.sample.movie.model.Movie
-import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class MovieDetailViewModel
 @Inject constructor(
@@ -18,11 +17,10 @@ class MovieDetailViewModel
 ) : CommonViewModel() {
 
     private val _viewState = MutableStateFlow(MovieDetailUiModel())
+
     val viewState: Flow<MovieDetailUiModel> = _viewState
 
     private var job: Job? = null
-
-    private val TAG = "MovieViewModel"
 
     init {
         load()
@@ -30,17 +28,14 @@ class MovieDetailViewModel
 
     fun load() {
         job?.cancel()
-        job = viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val movie = movieRepository.getMovie(Movie.Id(movieId))
-                val uiModel = MovieDetailUiModel(
-                    posterUrl = movie?.posterPath,
-                    title = movie?.title,
-                    overview = movie?.overview
-                )
-                _viewState.emit(uiModel)
-            } catch (t: Throwable) {
-            }
+        job = viewModelScope.launch(errorHandler) {
+            val movie = movieRepository.getMovie(Movie.Id(movieId))
+            val uiModel = MovieDetailUiModel(
+                posterUrl = movie?.posterPath,
+                title = movie?.title,
+                overview = movie?.overview
+            )
+            _viewState.emit(uiModel)
         }
     }
 }
@@ -54,5 +49,5 @@ data class MovieDetailUiModel(
 sealed class MovieState {
     class Success(val movie: Movie) : MovieState()
     object Loading : MovieState()
-    class Error(t: Throwable) : MovieState()
+    class Error(val t: Throwable) : MovieState()
 }

@@ -40,7 +40,8 @@ pluginManagement {
                 pluginId.contains("kotlin-dsl") -> useVersion("1.6.10")
                 pluginId.startsWith("org.jetbrains.kotlin") -> useVersion("1.6.10")
                 pluginId.startsWith("com.android.") -> useVersion("7.2.1")
-                pluginId == "org.jlleitschuh.gradle.ktlint" -> useVersion("10.3.0")
+                pluginId == "io.gitlab.arturbosch.detekt" ->
+                    useModule("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.20.0")
             }
         }
     }

@@ -1,6 +1,5 @@
 [versions]
 kotlin = "1.6.10"
-ktlint = "0.43.2"
 androidGradlePlugin = "7.2.1"
 coroutines = "1.6.0"
 dagger = "2.41"
@@ -61,4 +60,3 @@ compose-activity = { module = "androidx.activity:activity-compose", version = "1
 [plugins]
 agpPlugin = { id = "com.android.tools.build:gradle", version.ref = "androidGradlePlugin" }
 kotlinPlugin = { id = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-ktlintPlugin = { id = "org.jlleitschuh.gradle:ktlint-gradle", version = "10.3.0" }
