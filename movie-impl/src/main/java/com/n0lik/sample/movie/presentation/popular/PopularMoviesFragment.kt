@@ -37,7 +37,7 @@ class PopularMoviesFragment @Inject constructor() : Fragment(R.layout.popular_mo
         findNavController().navigate(
             R.id.action_open_detail_from_popular,
             Bundle().apply {
-                putInt("movieId", it.id!!.id)
+                putInt("movieId", it.id.id)
             }
         )
     }

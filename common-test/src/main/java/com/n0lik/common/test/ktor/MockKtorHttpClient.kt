@@ -99,6 +99,7 @@ private constructor(
         }
     }
 
+    @Suppress("unused")
     class Builder {
 
         private var headers: Headers = headersOf()
@@ -107,9 +108,9 @@ private constructor(
 
         fun mocks(mocks: List<MockResponse>) = apply { this.mocks = mocks }
 
-        fun mocks(init: Builder.() -> List<MockResponse>) = mocks(init())
+        fun mocks(init: Builder.() -> List<MockResponse>) = mocks(this.init())
 
-        fun headers(init: Builder.() -> Headers) = headers(init())
+        fun headers(init: Builder.() -> Headers) = headers(this.init())
 
         fun headers(headers: Headers) = apply { this.headers = headers }
 

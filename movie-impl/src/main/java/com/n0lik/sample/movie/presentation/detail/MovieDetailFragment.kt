@@ -2,6 +2,9 @@ package com.n0lik.sample.movie.presentation.detail
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -28,9 +31,16 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: MovieDetailViewModel by viewModels { viewModelFactory }
+    private lateinit var favoriteMenuItem: MenuItem
 
     private val posterCornerRadius: Int by lazy(LazyThreadSafetyMode.NONE) {
         resources.getDimensionPixelSize(R.dimen.movie_detail_poster_corner_radius)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.movie_detail_menu, menu)
+        favoriteMenuItem = menu.findItem(R.id.favorite_menu_item)
     }
 
     override fun onCreateView(
@@ -42,9 +52,16 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
         return binding.root
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.favorite_menu_item) {
+            viewModel.onFavoriteClick()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        setHasOptionsMenu(true)
         binding.movieDetailSwipeRefresh.setOnRefreshListener { viewModel.load() }
 
         lifecycleScope.launchWhenCreated {
@@ -91,6 +108,16 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
             }
             movieTitle.text = uiModel.movie?.title
             movieDescription.text = uiModel.movie?.overview
+            val drawableResId = uiModel.getMenuIconResId()
+            favoriteMenuItem.setIcon(drawableResId)
+        }
+    }
+
+    private fun MovieDetailUiModel.getMenuIconResId(): Int {
+        return if (isFavorite) {
+            R.drawable.ic_favorite_checked
+        } else {
+            R.drawable.ic_favorite
         }
     }
 

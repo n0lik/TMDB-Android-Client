@@ -3,15 +3,17 @@ package com.n0lik.sample.genres.data.api
 import com.n0lik.common.test.ktor.MockKtorHttpClient
 import com.n0lik.sample.genres.data.api.dto.GenreDto
 import com.n0lik.sample.genres.data.api.dto.GenresDto
-import java.net.UnknownHostException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.net.UnknownHostException
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.ExperimentalSerializationApi
 import org.junit.Assert
 import org.junit.Test
 
 private const val PATH_GET_GENRES = "/3/genre/movie/list"
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@ExperimentalSerializationApi
+@ExperimentalCoroutinesApi
 internal class GenresApiTest {
 
     private val mockHttpClient = MockKtorHttpClient.builder {

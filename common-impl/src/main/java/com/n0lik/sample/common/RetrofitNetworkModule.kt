@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalSerializationApi::class)
-
 package com.n0lik.sample.common
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -9,10 +7,10 @@ import com.n0lik.sample.common.network.ContentTypeInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoSet
+import kotlinx.serialization.ExperimentalSerializationApi
 import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.MediaType
@@ -61,6 +59,7 @@ internal class RetrofitNetworkModule {
 
     @Singleton
     @Provides
+    @OptIn(ExperimentalSerializationApi::class)
     fun provideConvertorFactory(): Converter.Factory {
         val json = Json {
             ignoreUnknownKeys = true

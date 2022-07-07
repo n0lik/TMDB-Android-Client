@@ -35,11 +35,17 @@ dependencies {
     implementation(libs.retrofit.core)
     implementation(libs.ktor.android)
 
+    implementation(libs.room.core)
+    implementation(libs.room.ktx)
+    kapt(libs.room.compiler)
+
     testImplementation(project(":common-test"))
     testImplementation(libs.junit.core)
     testImplementation(libs.mockk.core)
     testImplementation(libs.coroutine.test)
 
     androidTestImplementation(libs.junit.android)
+    androidTestImplementation(libs.coroutine.test)
     androidTestImplementation(libs.espresso)
+    androidTestImplementation(libs.room.test)
 }

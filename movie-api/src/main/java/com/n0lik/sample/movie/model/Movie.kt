@@ -3,7 +3,7 @@ package com.n0lik.sample.movie.model
 import com.n0lik.sample.genres.model.Genre
 
 data class Movie(
-    val id: Id?,
+    val id: Id,
     val title: String?,
     val overview: String?,
     val video: Boolean?,

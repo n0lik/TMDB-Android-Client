@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="movie_detail_fragment_title">Detail</string>
+    <string name="movie_detail_menu_favorite_title">Favorite</string>
+
     <dimen name="movie_detail_poster_corner_radius">16dp</dimen>
 </resources>

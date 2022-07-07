@@ -7,6 +7,7 @@ import com.n0lik.sample.movie.model.Movie
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,17 +34,31 @@ class MovieDetailViewModel
         job?.cancel()
         job = viewModelScope.launch(errorHandler) {
             _viewState.emit(_viewState.value.copy(state = Loading))
-            val movieDetail = movieDetailInteractor.getMovieDetail(Movie.Id(movieId))
-            _viewState.emit(MovieDetailUiModel.success(movieDetail.movie, movieDetail.similarMovies))
+            movieDetailInteractor.getMovieDetail(Movie.Id(movieId))
+                .catch { handleError(it) }
+                .collect {
+                    _viewState.emit(MovieDetailUiModel.success(it.movie, it.similarMovies, it.isFavorite))
+                }
+        }
+    }
+
+    fun onFavoriteClick() {
+        viewModelScope.launch {
+            val detailUiModel = _viewState.value
+            val newFavoriteState = !detailUiModel.isFavorite
+            detailUiModel.movie?.let {
+                movieDetailInteractor.changeFavoriteState(newFavoriteState, it.id)
+            }
         }
     }
 
     private fun initState(): MovieDetailUiModel {
-        return MovieDetailUiModel(Idle, null, null)
+        return MovieDetailUiModel(state = Idle, movie = null, similarMovies = null)
     }
 }
 
 data class MovieDetailUiModel(
+    val isFavorite: Boolean = false,
     val state: LoadingState,
     val movie: Movie?,
     val similarMovies: List<Movie>?
@@ -51,7 +66,9 @@ data class MovieDetailUiModel(
 
     companion object {
 
-        fun success(movie: Movie?, similarMovies: List<Movie>?) = MovieDetailUiModel(Success, movie, similarMovies)
+        fun success(movie: Movie?, similarMovies: List<Movie>?, isFavorite: Boolean) = MovieDetailUiModel(
+            isFavorite, Success, movie, similarMovies
+        )
     }
 }
 

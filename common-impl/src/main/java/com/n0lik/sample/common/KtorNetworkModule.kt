@@ -14,9 +14,9 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.observer.ResponseObserver
 import io.ktor.client.request.HttpSendPipeline
 import io.ktor.serialization.kotlinx.json.json
-import javax.inject.Singleton
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import javax.inject.Singleton
 
 /**
  * Module contains Ktor's settings up
@@ -25,11 +25,11 @@ import kotlinx.serialization.json.Json
 private const val DEFAULT_TIME_OUT = 20_000
 
 @Module
+@ExperimentalSerializationApi
 internal class KtorNetworkModule {
 
     @Singleton
     @Provides
-    @ExperimentalSerializationApi
     fun providesHttpClient(): HttpClient {
         return HttpClient(Android) {
             defaultRequest {

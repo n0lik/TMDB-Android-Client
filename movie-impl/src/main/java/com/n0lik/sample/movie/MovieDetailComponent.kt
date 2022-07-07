@@ -12,7 +12,8 @@ import dagger.Component
         MovieMapperModule::class,
         MovieDetailModule::class,
         ViewModelFactoryModule::class,
-        MovieDetailViewModelModule::class
+        MovieDetailViewModelModule::class,
+        FavoriteDbModule::class
     ],
     dependencies = [
         AppDependency::class,

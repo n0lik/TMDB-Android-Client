@@ -19,15 +19,11 @@ internal class MoviePageListMapper
         val currentPageNumber = model.page
         val totalPages = model.totalPages
 
-        if (currentPageNumber != null && totalPages != null) {
-            if ((currentPageNumber * DEFAULT_PAGE_SIZE) < totalPages) {
-                nextPageNumber = currentPageNumber + 1
-            }
+        if ((currentPageNumber * DEFAULT_PAGE_SIZE) < totalPages) {
+            nextPageNumber = currentPageNumber + 1
         }
 
-        val data = model.data?.let {
-            mapper.mapToList(it)
-        } ?: emptyList()
+        val data = mapper.mapToList(model.data)
 
         return PagingSource.LoadResult.Page(
             data = data,

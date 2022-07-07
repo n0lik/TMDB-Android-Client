@@ -9,7 +9,7 @@ class SampleApp : Application() {
 
     private val appDependency: AppComponent by lazy {
         DaggerAppComponent.factory()
-            .build(app = this)
+            .build(this.applicationContext)
     }
 
     override fun onCreate() {

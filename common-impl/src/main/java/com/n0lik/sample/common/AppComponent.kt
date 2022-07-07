@@ -1,6 +1,7 @@
 package com.n0lik.sample.common
 
 import android.app.Application
+import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -20,6 +21,6 @@ interface AppComponent : AppDependency {
     @Component.Factory
     interface Factory {
 
-        fun build(@BindsInstance app: Application): AppComponent
+        fun build(@BindsInstance context: Context): AppComponent
     }
 }

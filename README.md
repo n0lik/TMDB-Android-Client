@@ -17,6 +17,7 @@ This project exposes ideas, approaches and its implementations.
 -  [Dagger2](https://dagger.dev/)
 -  [Mockk](https://mockk.io/)
 -  [Glide](https://bumptech.github.io/glide/)
+-  [Room](https://developer.android.com/jetpack/androidx/releases/room)
 
 ### Settings
 
