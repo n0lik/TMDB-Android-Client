@@ -24,5 +24,13 @@
         android:id="@+id/movie_detail_fragment"
         android:name="com.n0lik.sample.movie.presentation.detail.MovieDetailFragment"
         android:label="@string/movie_detail_fragment_title"
-        tools:layout="@layout/movie_detail_fragment" />
+        tools:layout="@layout/movie_detail_fragment">
+        <action
+            android:id="@+id/action_open_detail_from_detail"
+            app:destination="@id/movie_detail_fragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
 </navigation>

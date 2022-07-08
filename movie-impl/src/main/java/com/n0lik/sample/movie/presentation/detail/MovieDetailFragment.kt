@@ -12,15 +12,24 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.n0lik.sample.common.AppDependency
 import com.n0lik.sample.common.di.Injectable
+import com.n0lik.sample.common.ui.adapter.DelegateAdapter
+import com.n0lik.sample.common.ui.adapter.diffUtilBuilder
+import com.n0lik.sample.common.ui.ext.removeAdapterOnDetach
+import com.n0lik.sample.common.ui.ext.visibleIf
 import com.n0lik.sample.common.ui.utils.CropOptions
 import com.n0lik.sample.common.ui.utils.loadImage
+import com.n0lik.sample.common.ui.widget.recyclerview.SpacingItemDecorator
 import com.n0lik.sample.genres.di.DaggerGenreComponent
 import com.n0lik.sample.movie.DaggerMovieDetailComponent
 import com.n0lik.sample.movie.impl.R
 import com.n0lik.sample.movie.impl.databinding.MovieDetailFragmentBinding
+import com.n0lik.sample.movie.model.Movie
 import com.n0lik.sample.movie.model.TmdbImage
+import com.n0lik.sample.movie.presentation.delegates.movieAdapterDelegate
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -37,6 +46,11 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
     private val posterCornerRadius: Int by lazy(LazyThreadSafetyMode.NONE) {
         resources.getDimensionPixelSize(R.dimen.movie_detail_poster_corner_radius)
     }
+
+    private val similarMoviesAdapter = DelegateAdapter(
+        movieAdapterDelegate { openMovieDetail(it) },
+        diffUtil = diffUtilBuilder({ old: Movie, new: Movie -> old.id == new.id })
+    )
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.movie_detail_menu, menu)
@@ -68,7 +82,22 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
+        binding.movieDetailSimilarMovies.apply {
+            adapter = similarMoviesAdapter
+            addItemDecoration(SpacingItemDecorator(resources.getDimensionPixelSize(R.dimen.movie_detail_item_space)))
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            removeAdapterOnDetach()
+        }
         observeUiState()
+    }
+
+    private fun openMovieDetail(movie: Movie) {
+        findNavController().navigate(
+            R.id.action_open_detail_from_detail,
+            Bundle().apply {
+                putInt("movieId", movie.id.id)
+            }
+        )
     }
 
     private fun observeUiState() {
@@ -104,11 +133,17 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
 
     private fun render(uiModel: MovieDetailUiModel) {
         with(binding) {
-            loadPoster(uiModel.movie?.posterPath)
-            loadBackdrop(uiModel.backdrops)
-            movieTitle.text = uiModel.movie?.title
-            movieDescription.text = uiModel.movie?.overview
+            showPoster(uiModel.movie?.posterPath)
+            showBackdrop(uiModel.backdrops)
+            movieDetailTitle.text = uiModel.movie?.title
+            movieDetailDescription.text = uiModel.movie?.overview
+            showSimilarMovies(uiModel.similarMovies)
         }
+    }
+
+    private fun showSimilarMovies(movies: List<Movie>?) {
+        binding.movieDetailSimilarGroup.visibleIf(!movies.isNullOrEmpty())
+        movies?.also { similarMoviesAdapter.setItems(it) }
     }
 
     private fun observeFavoriteState() {
@@ -119,16 +154,16 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
         }
     }
 
-    private fun loadPoster(url: String?) {
+    private fun showPoster(url: String?) {
         url?.also {
-            binding.moviePoster.loadImage(it) {
+            binding.movieDetailPoster.loadImage(it) {
                 cornerRadius = posterCornerRadius
                 this
             }
         }
     }
 
-    private fun loadBackdrop(images: List<TmdbImage>?) {
+    private fun showBackdrop(images: List<TmdbImage>?) {
         images?.firstOrNull()?.getFullPath()?.also {
             binding.movieHeaderImage.loadImage(it) {
                 cropOptions = CropOptions.CenterCrop

@@ -2,6 +2,12 @@
 <resources>
     <string name="movie_detail_fragment_title">Detail</string>
     <string name="movie_detail_menu_favorite_title">Favorite</string>
+    <string name="movie_detail_similar_movies_title">Similar movies:</string>
 
     <dimen name="movie_detail_poster_corner_radius">16dp</dimen>
+    <dimen name="movie_detail_item_space">16dp</dimen>
+    <dimen name="movie_detail_header_view_height">180dp</dimen>
+    <dimen name="movie_detail_poster_view_height">220dp</dimen>
+    <dimen name="movie_detail_poster_view_width">150dp</dimen>
+
 </resources>

@@ -14,6 +14,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.material)
     implementation(libs.androidx.recyclerview)
+    implementation(libs.adapterDelegate)
 
     implementation(libs.glide.glide)
     kapt(libs.glide.compiler)

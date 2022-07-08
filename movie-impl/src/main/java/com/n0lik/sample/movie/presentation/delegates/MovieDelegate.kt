@@ -6,12 +6,14 @@ import com.n0lik.sample.movie.impl.databinding.MovieItemBinding
 import com.n0lik.sample.movie.model.Movie
 
 fun movieAdapterDelegate(
-    onMovieClick: (Movie) -> Unit
-) = adapterDelegateViewBinding<Movie, Any, MovieItemBinding>(
+    onClick: (Movie) -> Unit
+) = adapterDelegateViewBinding<Movie, Movie, MovieItemBinding>(
     viewBinding = { layoutInflater, root -> MovieItemBinding.inflate(layoutInflater, root, false) }
 ) {
-    binding.apply {
-        itemMoviePoster.load(item.posterPath)
-        root.setOnClickListener { onMovieClick.invoke(item) }
+    bind {
+        binding.apply {
+            itemMoviePoster.load(item.posterPath)
+            root.setOnClickListener { onClick(item) }
+        }
     }
 }
