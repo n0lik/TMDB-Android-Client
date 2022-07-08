@@ -4,7 +4,6 @@ import com.n0lik.sample.movie.data.api.dto.MovieDto
 import com.n0lik.sample.movie.data.api.dto.PagedListDto
 import retrofit2.http.GET
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 /**
  * Server's convention
@@ -25,10 +24,5 @@ internal interface MovieApi {
     @GET("3/movie/{movieId}/similar")
     suspend fun getSimilarMovies(
         @Path("movieId") movieId: Int
-    ): PagedListDto<MovieDto>
-
-    @GET("3/movie/popular")
-    suspend fun getPopularMovies(
-        @Query("page") page: Int
     ): PagedListDto<MovieDto>
 }

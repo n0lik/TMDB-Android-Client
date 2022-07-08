@@ -11,4 +11,5 @@ dependencies {
     implementation(libs.ktor.serialization)
 
     implementation(libs.retrofit.core)
+    implementation(libs.mockk.core)
 }

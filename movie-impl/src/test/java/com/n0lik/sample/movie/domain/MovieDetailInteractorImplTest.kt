@@ -1,12 +1,15 @@
 package com.n0lik.sample.movie.domain
 
+import com.n0lik.common.test.ext.mockkRelaxed
 import com.n0lik.common.test.response.CONTENT_NOT_FOUND_JSON
 import com.n0lik.common.test.response.toResponseBody
 import com.n0lik.sample.movie.data.FavoriteRepository
+import com.n0lik.sample.movie.data.MovieImageRepository
 import com.n0lik.sample.movie.data.MovieRepository
 import com.n0lik.sample.movie.data.api.dto.MovieDto
 import com.n0lik.sample.movie.model.Movie
 import com.n0lik.sample.movie.model.MovieDetail
+import com.n0lik.sample.movie.model.MovieImages
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -25,11 +28,13 @@ internal class MovieDetailInteractorImplTest {
 
     private val mockMovieRepository = mockk<MovieRepository>()
     private val mockFavoriteRepository = mockk<FavoriteRepository>()
+    private val mockMovieImageRepository = mockk<MovieImageRepository>()
     private val movieId = Movie.Id(1)
 
     private val movieInteractor = MovieDetailInteractorImpl(
         movieRepository = mockMovieRepository,
-        favoriteRepository = mockFavoriteRepository
+        favoriteRepository = mockFavoriteRepository,
+        movieImageRepository = mockMovieImageRepository
     )
 
     @Test
@@ -53,6 +58,7 @@ internal class MovieDetailInteractorImplTest {
             video = true
         )
         coEvery { mockFavoriteRepository.isFavorite(movieId) } returns flowOf(false)
+        coEvery { mockMovieImageRepository.getImages(movieId) } returns MovieImages(emptyList(), emptyList())
         coEvery {
             mockMovieRepository.getSimilarMovies(movieId)
         } returns listOf(
@@ -109,7 +115,9 @@ internal class MovieDetailInteractorImplTest {
                     voteCount = 2,
                     video = true
                 )
-            )
+            ),
+            posters = emptyList(),
+            backdrops = emptyList()
         )
 
         val actual = movieInteractor.getMovieDetail(movieId).first()
@@ -138,6 +146,7 @@ internal class MovieDetailInteractorImplTest {
             video = true
         )
         coEvery { mockFavoriteRepository.isFavorite(movieId) } returns flowOf(true)
+        coEvery { mockMovieImageRepository.getImages(movieId) } returns MovieImages(emptyList(), emptyList())
         coEvery {
             mockMovieRepository.getSimilarMovies(movieId)
         } returns listOf(
@@ -194,7 +203,9 @@ internal class MovieDetailInteractorImplTest {
                     voteCount = 2,
                     video = true
                 )
-            )
+            ),
+            posters = emptyList(),
+            backdrops = emptyList()
         )
 
         val actual = movieInteractor.getMovieDetail(movieId).first()
@@ -240,8 +251,8 @@ internal class MovieDetailInteractorImplTest {
     @Test
     fun `should change favorite state correctly when movie NOT added to favorite`() = runTest {
         coEvery { movieInteractor.changeFavoriteState(true, movieId) } returns Unit
-        coEvery { mockMovieRepository.getMovie(movieId) } returns mockk(relaxed = true)
-        coEvery { mockMovieRepository.getSimilarMovies(movieId) } returns mockk(relaxed = true)
+        coEvery { mockMovieRepository.getMovie(movieId) } returns mockkRelaxed()
+        coEvery { mockMovieRepository.getSimilarMovies(movieId) } returns mockkRelaxed()
 
         movieInteractor.changeFavoriteState(true, movieId)
 
@@ -251,8 +262,8 @@ internal class MovieDetailInteractorImplTest {
     @Test
     fun `should change favorite state correctly when movie added to favorite`() = runTest {
         coEvery { movieInteractor.changeFavoriteState(false, movieId) } returns Unit
-        coEvery { mockMovieRepository.getMovie(movieId) } returns mockk(relaxed = true)
-        coEvery { mockMovieRepository.getSimilarMovies(movieId) } returns mockk(relaxed = true)
+        coEvery { mockMovieRepository.getMovie(movieId) } returns mockkRelaxed()
+        coEvery { mockMovieRepository.getSimilarMovies(movieId) } returns mockkRelaxed()
 
         movieInteractor.changeFavoriteState(false, movieId)
 

@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.n0lik.sample.common.ui.CommonViewModel
 import com.n0lik.sample.movie.domain.MovieDetailInteractor
 import com.n0lik.sample.movie.model.Movie
+import com.n0lik.sample.movie.model.TmdbImage
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,7 +38,15 @@ class MovieDetailViewModel
             movieDetailInteractor.getMovieDetail(Movie.Id(movieId))
                 .catch { handleError(it) }
                 .collect {
-                    _viewState.emit(MovieDetailUiModel.success(it.movie, it.similarMovies, it.isFavorite))
+                    _viewState.emit(
+                        MovieDetailUiModel.success(
+                            movie = it.movie,
+                            similarMovies = it.similarMovies,
+                            isFavorite = it.isFavorite,
+                            backdrops = it.backdrops,
+                            posters = it.posters
+                        )
+                    )
                 }
         }
     }
@@ -53,21 +62,38 @@ class MovieDetailViewModel
     }
 
     private fun initState(): MovieDetailUiModel {
-        return MovieDetailUiModel(state = Idle, movie = null, similarMovies = null)
+        return MovieDetailUiModel.loading()
     }
 }
 
 data class MovieDetailUiModel(
-    val isFavorite: Boolean = false,
+    val isFavorite: Boolean,
     val state: LoadingState,
     val movie: Movie?,
-    val similarMovies: List<Movie>?
+    val similarMovies: List<Movie>?,
+    val backdrops: List<TmdbImage>?,
+    val posters: List<TmdbImage>?
 ) {
 
     companion object {
 
-        fun success(movie: Movie?, similarMovies: List<Movie>?, isFavorite: Boolean) = MovieDetailUiModel(
-            isFavorite, Success, movie, similarMovies
+        fun loading() = MovieDetailUiModel(
+            isFavorite = false,
+            state = Loading,
+            movie = null,
+            similarMovies = null,
+            posters = null,
+            backdrops = null
+        )
+
+        fun success(
+            movie: Movie?,
+            similarMovies: List<Movie>?,
+            isFavorite: Boolean,
+            backdrops: List<TmdbImage>?,
+            posters: List<TmdbImage>?
+        ) = MovieDetailUiModel(
+            isFavorite, Success, movie, similarMovies, backdrops, posters
         )
     }
 }
@@ -75,5 +101,4 @@ data class MovieDetailUiModel(
 sealed class LoadingState
 object Success : LoadingState()
 object Loading : LoadingState()
-object Idle : LoadingState()
-class Error(val throwable: Throwable) : LoadingState()
+data class Error(val throwable: Throwable) : LoadingState()

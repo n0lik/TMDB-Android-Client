@@ -20,27 +20,40 @@ import com.n0lik.sample.genres.di.DaggerGenreComponent
 import com.n0lik.sample.movie.DaggerMovieDetailComponent
 import com.n0lik.sample.movie.impl.R
 import com.n0lik.sample.movie.impl.databinding.MovieDetailFragmentBinding
+import com.n0lik.sample.movie.model.TmdbImage
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
+@Suppress("TooManyFunctions")
 class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable {
-
-    private var _binding: MovieDetailFragmentBinding? = null
-    private val binding
-        get() = _binding!!
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+    private var _binding: MovieDetailFragmentBinding? = null
+    private val binding
+        get() = _binding!!
     private val viewModel: MovieDetailViewModel by viewModels { viewModelFactory }
-    private lateinit var favoriteMenuItem: MenuItem
-
+    private var favoriteMenuItem: MenuItem? = null
     private val posterCornerRadius: Int by lazy(LazyThreadSafetyMode.NONE) {
         resources.getDimensionPixelSize(R.dimen.movie_detail_poster_corner_radius)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.movie_detail_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
         favoriteMenuItem = menu.findItem(R.id.favorite_menu_item)
+        observeFavoriteState()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.favorite_menu_item) {
+            viewModel.onFavoriteClick()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onCreateView(
@@ -52,30 +65,25 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
         return binding.root
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.favorite_menu_item) {
-            viewModel.onFavoriteClick()
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        binding.movieDetailSwipeRefresh.setOnRefreshListener { viewModel.load() }
+        observeUiState()
+    }
 
+    private fun observeUiState() {
+        binding.movieDetailSwipeRefresh.setOnRefreshListener { viewModel.load() }
         lifecycleScope.launchWhenCreated {
             viewModel.viewState.collect { uiModel ->
-                uiModel.updateRefreshState()
+                binding.movieDetailSwipeRefresh.isRefreshing = uiModel.state == Loading
                 when (uiModel.state) {
                     is Error -> {
                         //TODO it will be fixed later
                         Toast.makeText(requireContext(), "Some error!", Toast.LENGTH_LONG).show()
                     }
-                    is Success -> updateUi(uiModel)
+                    is Success -> render(uiModel)
                     else -> Unit
                 }
-
             }
         }
     }
@@ -94,34 +102,49 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
             .inject(this)
     }
 
-    private fun updateUi(uiModel: MovieDetailUiModel) {
+    private fun render(uiModel: MovieDetailUiModel) {
         with(binding) {
-            uiModel.movie?.posterPath?.also { url ->
-                movieHeaderImage.loadImage(url) {
-                    cropOptions = CropOptions.CenterCrop
-                    this
-                }
-                moviePoster.loadImage(url) {
-                    cornerRadius = posterCornerRadius
-                    this
-                }
-            }
+            loadPoster(uiModel.movie?.posterPath)
+            loadBackdrop(uiModel.backdrops)
             movieTitle.text = uiModel.movie?.title
             movieDescription.text = uiModel.movie?.overview
-            val drawableResId = uiModel.getMenuIconResId()
-            favoriteMenuItem.setIcon(drawableResId)
         }
     }
 
-    private fun MovieDetailUiModel.getMenuIconResId(): Int {
-        return if (isFavorite) {
-            R.drawable.ic_favorite_checked
-        } else {
-            R.drawable.ic_favorite
+    private fun observeFavoriteState() {
+        lifecycleScope.launchWhenResumed {
+            viewModel.viewState
+                .map { it.isFavorite }
+                .collect { updateFavoriteIcon(it) }
         }
     }
 
-    private fun MovieDetailUiModel.updateRefreshState() {
-        binding.movieDetailSwipeRefresh.isRefreshing = state == Loading
+    private fun loadPoster(url: String?) {
+        url?.also {
+            binding.moviePoster.loadImage(it) {
+                cornerRadius = posterCornerRadius
+                this
+            }
+        }
+    }
+
+    private fun loadBackdrop(images: List<TmdbImage>?) {
+        images?.firstOrNull()?.getFullPath()?.also {
+            binding.movieHeaderImage.loadImage(it) {
+                cropOptions = CropOptions.CenterCrop
+                this
+            }
+        }
+    }
+
+    private fun updateFavoriteIcon(isFavorite: Boolean) {
+        favoriteMenuItem?.apply {
+            val drawableResId = if (isFavorite) {
+                R.drawable.ic_favorite_checked
+            } else {
+                R.drawable.ic_favorite
+            }
+            setIcon(drawableResId)
+        }
     }
 }

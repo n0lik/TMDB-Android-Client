@@ -1,6 +1,7 @@
 package com.n0lik.sample.movie.data
 
 import com.n0lik.common.test.dispatcher.TestAppDispatcher
+import com.n0lik.common.test.ext.mockkRelaxed
 import com.n0lik.common.test.response.CONTENT_NOT_FOUND_JSON
 import com.n0lik.common.test.response.toResponseBody
 import com.n0lik.sample.movie.data.api.MovieApi
@@ -35,7 +36,7 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `should load movie by id`() = runTest {
-        coEvery { movieApiMock.getMovieById(1) } returns mockk(relaxed = true)
+        coEvery { movieApiMock.getMovieById(1) } returns mockkRelaxed()
         every { movieMapper.mapTo(any()) } returns mockk()
 
         val actual = repository.getMovie(Movie.Id(1))

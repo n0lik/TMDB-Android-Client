@@ -7,9 +7,12 @@ import androidx.room.Room
 import com.n0lik.sample.common.di.ViewModelKey
 import com.n0lik.sample.movie.data.FavoriteRepository
 import com.n0lik.sample.movie.data.FavoriteRepositoryImpl
+import com.n0lik.sample.movie.data.MovieImageRepository
+import com.n0lik.sample.movie.data.MovieImageRepositoryImpl
 import com.n0lik.sample.movie.data.MovieRepository
 import com.n0lik.sample.movie.data.MovieRepositoryImpl
 import com.n0lik.sample.movie.data.api.MovieApi
+import com.n0lik.sample.movie.data.api.MovieImageApi
 import com.n0lik.sample.movie.data.db.TmdbFavoriteDatabase
 import com.n0lik.sample.movie.data.db.dao.FavoriteDao
 import com.n0lik.sample.movie.domain.MovieDetailInteractor
@@ -29,6 +32,11 @@ internal class MovieApiModule {
     fun provideMovieApi(retrofit: Retrofit): MovieApi {
         return retrofit.create(MovieApi::class.java)
     }
+
+    @Provides
+    fun provideMovieImageApi(retrofit: Retrofit): MovieImageApi {
+        return retrofit.create(MovieImageApi::class.java)
+    }
 }
 
 @Module
@@ -39,6 +47,9 @@ internal interface MovieDetailModule {
 
     @Binds
     fun provideFavoriteRepository(impl: FavoriteRepositoryImpl): FavoriteRepository
+
+    @Binds
+    fun provideMovieImageRepository(impl: MovieImageRepositoryImpl): MovieImageRepository
 
     @Binds
     fun provideMovieDetailInteractor(impl: MovieDetailInteractorImpl): MovieDetailInteractor
