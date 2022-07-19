@@ -3,13 +3,12 @@ package com.n0lik.sample.movie.domain
 import com.n0lik.common.test.ext.mockkRelaxed
 import com.n0lik.common.test.response.CONTENT_NOT_FOUND_JSON
 import com.n0lik.common.test.response.toResponseBody
+import com.n0lik.sample.common.model.Image
 import com.n0lik.sample.movie.data.FavoriteRepository
-import com.n0lik.sample.movie.data.MovieImageRepository
 import com.n0lik.sample.movie.data.MovieRepository
 import com.n0lik.sample.movie.data.api.dto.MovieDto
 import com.n0lik.sample.movie.model.Movie
 import com.n0lik.sample.movie.model.MovieDetail
-import com.n0lik.sample.movie.model.MovieImages
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -23,18 +22,16 @@ import retrofit2.HttpException
 import retrofit2.Response
 import java.net.UnknownHostException
 
-@ExperimentalCoroutinesApi
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class MovieDetailInteractorImplTest {
 
     private val mockMovieRepository = mockk<MovieRepository>()
     private val mockFavoriteRepository = mockk<FavoriteRepository>()
-    private val mockMovieImageRepository = mockk<MovieImageRepository>()
     private val movieId = Movie.Id(1)
 
     private val movieInteractor = MovieDetailInteractorImpl(
         movieRepository = mockMovieRepository,
-        favoriteRepository = mockFavoriteRepository,
-        movieImageRepository = mockMovieImageRepository
+        favoriteRepository = mockFavoriteRepository
     )
 
     @Test
@@ -45,7 +42,16 @@ internal class MovieDetailInteractorImplTest {
             id = Movie.Id(1),
             title = "Title",
             overview = "Overview",
-            _posterPath = "path",
+            posterImage = Image.Poster(
+                path = "/poster.jpg",
+                sizes = emptyList(),
+                secureBaseUrl = "https://test.com"
+            ),
+            backdropImage = Image.Backdrop(
+                path = "/backdrop.jpg",
+                sizes = emptyList(),
+                secureBaseUrl = "https://test.com"
+            ),
             budget = 10_000,
             genres = emptyList(),
             imdbId = "123",
@@ -58,7 +64,6 @@ internal class MovieDetailInteractorImplTest {
             video = true
         )
         coEvery { mockFavoriteRepository.isFavorite(movieId) } returns flowOf(false)
-        coEvery { mockMovieImageRepository.getImages(movieId) } returns MovieImages(emptyList(), emptyList())
         coEvery {
             mockMovieRepository.getSimilarMovies(movieId)
         } returns listOf(
@@ -66,7 +71,16 @@ internal class MovieDetailInteractorImplTest {
                 id = Movie.Id(2),
                 title = "Title_2",
                 overview = "Overview_2",
-                _posterPath = "path_2",
+                posterImage = Image.Poster(
+                    path = "/poster2.jpg",
+                    sizes = emptyList(),
+                    secureBaseUrl = "https://test.com"
+                ),
+                backdropImage = Image.Backdrop(
+                    path = "/backdrop2.jpg",
+                    sizes = emptyList(),
+                    secureBaseUrl = "https://test.com"
+                ),
                 budget = 20_000,
                 genres = emptyList(),
                 imdbId = "1234",
@@ -86,7 +100,16 @@ internal class MovieDetailInteractorImplTest {
                 id = Movie.Id(1),
                 title = "Title",
                 overview = "Overview",
-                _posterPath = "path",
+                posterImage = Image.Poster(
+                    path = "/poster.jpg",
+                    sizes = emptyList(),
+                    secureBaseUrl = "https://test.com"
+                ),
+                backdropImage = Image.Backdrop(
+                    path = "/backdrop.jpg",
+                    sizes = emptyList(),
+                    secureBaseUrl = "https://test.com"
+                ),
                 budget = 10_000,
                 genres = emptyList(),
                 imdbId = "123",
@@ -103,7 +126,16 @@ internal class MovieDetailInteractorImplTest {
                     id = Movie.Id(2),
                     title = "Title_2",
                     overview = "Overview_2",
-                    _posterPath = "path_2",
+                    posterImage = Image.Poster(
+                        path = "/poster2.jpg",
+                        sizes = emptyList(),
+                        secureBaseUrl = "https://test.com"
+                    ),
+                    backdropImage = Image.Backdrop(
+                        path = "/backdrop2.jpg",
+                        sizes = emptyList(),
+                        secureBaseUrl = "https://test.com"
+                    ),
                     budget = 20_000,
                     genres = emptyList(),
                     imdbId = "1234",
@@ -115,9 +147,7 @@ internal class MovieDetailInteractorImplTest {
                     voteCount = 2,
                     video = true
                 )
-            ),
-            posters = emptyList(),
-            backdrops = emptyList()
+            )
         )
 
         val actual = movieInteractor.getMovieDetail(movieId).first()
@@ -133,7 +163,16 @@ internal class MovieDetailInteractorImplTest {
             id = Movie.Id(1),
             title = "Title",
             overview = "Overview",
-            _posterPath = "path",
+            posterImage = Image.Poster(
+                path = "/poster.jpg",
+                sizes = emptyList(),
+                secureBaseUrl = "https://test.com"
+            ),
+            backdropImage = Image.Backdrop(
+                path = "/backdrop.jpg",
+                sizes = emptyList(),
+                secureBaseUrl = "https://test.com"
+            ),
             budget = 10_000,
             genres = emptyList(),
             imdbId = "123",
@@ -146,7 +185,6 @@ internal class MovieDetailInteractorImplTest {
             video = true
         )
         coEvery { mockFavoriteRepository.isFavorite(movieId) } returns flowOf(true)
-        coEvery { mockMovieImageRepository.getImages(movieId) } returns MovieImages(emptyList(), emptyList())
         coEvery {
             mockMovieRepository.getSimilarMovies(movieId)
         } returns listOf(
@@ -154,7 +192,16 @@ internal class MovieDetailInteractorImplTest {
                 id = Movie.Id(2),
                 title = "Title_2",
                 overview = "Overview_2",
-                _posterPath = "path_2",
+                posterImage = Image.Poster(
+                    path = "/poster.jpg",
+                    sizes = emptyList(),
+                    secureBaseUrl = "https://test.com"
+                ),
+                backdropImage = Image.Backdrop(
+                    path = "/backdrop.jpg",
+                    sizes = emptyList(),
+                    secureBaseUrl = "https://test.com"
+                ),
                 budget = 20_000,
                 genres = emptyList(),
                 imdbId = "1234",
@@ -174,7 +221,16 @@ internal class MovieDetailInteractorImplTest {
                 id = Movie.Id(1),
                 title = "Title",
                 overview = "Overview",
-                _posterPath = "path",
+                posterImage = Image.Poster(
+                    path = "/poster.jpg",
+                    sizes = emptyList(),
+                    secureBaseUrl = "https://test.com"
+                ),
+                backdropImage = Image.Backdrop(
+                    path = "/backdrop.jpg",
+                    sizes = emptyList(),
+                    secureBaseUrl = "https://test.com"
+                ),
                 budget = 10_000,
                 genres = emptyList(),
                 imdbId = "123",
@@ -191,7 +247,16 @@ internal class MovieDetailInteractorImplTest {
                     id = Movie.Id(2),
                     title = "Title_2",
                     overview = "Overview_2",
-                    _posterPath = "path_2",
+                    posterImage = Image.Poster(
+                        path = "/poster.jpg",
+                        sizes = emptyList(),
+                        secureBaseUrl = "https://test.com"
+                    ),
+                    backdropImage = Image.Backdrop(
+                        path = "/backdrop.jpg",
+                        sizes = emptyList(),
+                        secureBaseUrl = "https://test.com"
+                    ),
                     budget = 20_000,
                     genres = emptyList(),
                     imdbId = "1234",
@@ -203,9 +268,7 @@ internal class MovieDetailInteractorImplTest {
                     voteCount = 2,
                     video = true
                 )
-            ),
-            posters = emptyList(),
-            backdrops = emptyList()
+            )
         )
 
         val actual = movieInteractor.getMovieDetail(movieId).first()
@@ -218,22 +281,7 @@ internal class MovieDetailInteractorImplTest {
         coEvery { mockFavoriteRepository.isFavorite(movieId) } returns flowOf(false)
         coEvery {
             mockMovieRepository.getMovie(movieId)
-        } returns Movie(
-            id = Movie.Id(1),
-            title = "Title",
-            overview = "Overview",
-            _posterPath = "path",
-            budget = 10_000,
-            genres = emptyList(),
-            imdbId = "123",
-            languages = emptyList(),
-            originalTitle = "Original title",
-            productionCompanies = emptyList(),
-            releaseDate = null,
-            voteAverage = 1.0,
-            voteCount = 1,
-            video = true
-        )
+        } returns mockkRelaxed()
         coEvery { mockMovieRepository.getSimilarMovies(movieId) } throws UnknownHostException()
 
         movieInteractor.getMovieDetail(movieId).first()

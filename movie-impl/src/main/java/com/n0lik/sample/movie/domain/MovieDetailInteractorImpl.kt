@@ -1,7 +1,6 @@
 package com.n0lik.sample.movie.domain
 
 import com.n0lik.sample.movie.data.FavoriteRepository
-import com.n0lik.sample.movie.data.MovieImageRepository
 import com.n0lik.sample.movie.data.MovieRepository
 import com.n0lik.sample.movie.model.Movie
 import com.n0lik.sample.movie.model.MovieDetail
@@ -16,8 +15,7 @@ import javax.inject.Inject
 internal class MovieDetailInteractorImpl
 @Inject constructor(
     private val movieRepository: MovieRepository,
-    private val favoriteRepository: FavoriteRepository,
-    private val movieImageRepository: MovieImageRepository
+    private val favoriteRepository: FavoriteRepository
 ) : MovieDetailInteractor {
 
     override suspend fun getMovieDetail(movieId: Movie.Id): Flow<MovieDetail> = flow {
@@ -32,15 +30,11 @@ internal class MovieDetailInteractorImpl
         ensureActive()
         val movie = async { movieRepository.getMovie(movieId) }
         val similarMovies = async { movieRepository.getSimilarMovies(movieId) }
-        val images = async { movieImageRepository.getImages(movieId) }
-        val movieImage = images.await()
 
         MovieDetail(
             isFavorite = false,
             movie = movie.await(),
-            similarMovies = similarMovies.await(),
-            backdrops = movieImage.backdrops,
-            posters = movieImage.posters
+            similarMovies = similarMovies.await()
         )
     }
 

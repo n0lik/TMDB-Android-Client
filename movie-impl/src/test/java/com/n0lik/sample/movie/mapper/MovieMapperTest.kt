@@ -1,8 +1,12 @@
 package com.n0lik.sample.movie.mapper
 
-import com.n0lik.sample.common.mapper.MapperTo
+import com.n0lik.common.test.ext.mockkRelaxed
+import com.n0lik.sample.common.mapper.Mapper0
+import com.n0lik.sample.common.model.Image
+import com.n0lik.sample.common.model.ImageConfig
 import com.n0lik.sample.genres.data.api.dto.GenreDto
 import com.n0lik.sample.genres.model.Genre
+import com.n0lik.sample.movie.builder.TmdbImageFactory
 import com.n0lik.sample.movie.data.api.dto.LanguageDto
 import com.n0lik.sample.movie.data.api.dto.MovieDto
 import com.n0lik.sample.movie.data.api.dto.ProductionCompanyDto
@@ -10,26 +14,35 @@ import com.n0lik.sample.movie.model.Language
 import com.n0lik.sample.movie.model.Movie
 import com.n0lik.sample.movie.model.ProductionCompany
 import io.mockk.every
-import io.mockk.mockk
 import org.junit.Assert
 import org.junit.Test
 
 internal class MovieMapperTest {
 
-    private val genreMapperMock = mockk<MapperTo<GenreDto, Genre>>(relaxed = true) {
+    private val genreMapperMock = mockkRelaxed<Mapper0<GenreDto, Genre>> {
         every { mapToList(any()) } returns emptyList()
     }
-    private val productionCompanyMapperMock = mockk<MapperTo<ProductionCompanyDto, ProductionCompany>>(relaxed = true) {
+    private val productionCompanyMapperMock = mockkRelaxed<Mapper0<ProductionCompanyDto, ProductionCompany>> {
         every { mapToList(any()) } returns emptyList()
     }
-    private val languageMapperMock = mockk<MapperTo<LanguageDto, Language>>(relaxed = true) {
+    private val languageMapperMock = mockkRelaxed<Mapper0<LanguageDto, Language>> {
         every { mapToList(any()) } returns emptyList()
     }
+    private val defaultImageConfig = ImageConfig(
+        backdropSizes = listOf(
+            "w320", "w500", "w720"
+        ),
+        posterSizes = listOf(
+            "w320", "w500", "w720"
+        ),
+        secureBaseUrl = "https://test.com/"
+    )
 
     private val mapper = MovieMapper(
         genreMapper = genreMapperMock,
         productionCompanyMapper = productionCompanyMapperMock,
-        languageMapper = languageMapperMock
+        languageMapper = languageMapperMock,
+        imageFactory = TmdbImageFactory()
     )
 
     @Test
@@ -41,7 +54,8 @@ internal class MovieMapperTest {
             voteCount = 1,
             title = "Title",
             overview = "Overview",
-            posterPath = "path",
+            posterPath = "/poster.jpg",
+            backdropPath = "/backdrop.jpg",
             budget = 10_000,
             genres = emptyList(),
             imdbId = "123",
@@ -63,7 +77,20 @@ internal class MovieMapperTest {
             id = Movie.Id(1),
             title = "Title",
             overview = "Overview",
-            _posterPath = "path",
+            posterImage = Image.Poster(
+                path = "/poster.jpg",
+                sizes = listOf(
+                    "w320", "w500", "w720"
+                ),
+                secureBaseUrl = "https://test.com/"
+            ),
+            backdropImage = Image.Backdrop(
+                path = "/backdrop.jpg",
+                sizes = listOf(
+                    "w320", "w500", "w720"
+                ),
+                secureBaseUrl = "https://test.com/"
+            ),
             budget = 10_000,
             genres = emptyList(),
             imdbId = "123",
@@ -76,7 +103,7 @@ internal class MovieMapperTest {
             video = true
         )
 
-        val actual = mapper.mapTo(moveDto)
+        val actual = mapper.mapTo(moveDto, defaultImageConfig)
 
         Assert.assertEquals(expected, actual)
     }
@@ -91,7 +118,8 @@ internal class MovieMapperTest {
                 voteCount = 1,
                 title = "Title",
                 overview = "Overview",
-                posterPath = "path",
+                posterPath = "/poster1.jpg",
+                backdropPath = "/backdrop1.jpg",
                 budget = 10_000,
                 genres = emptyList(),
                 imdbId = "123",
@@ -116,7 +144,8 @@ internal class MovieMapperTest {
                 voteCount = 1,
                 title = "Title",
                 overview = "Overview",
-                posterPath = "path",
+                posterPath = "/poster2.jpg",
+                backdropPath = "/backdrop2.jpg",
                 budget = 10_000,
                 genres = emptyList(),
                 imdbId = "123",
@@ -140,7 +169,20 @@ internal class MovieMapperTest {
                 id = Movie.Id(1),
                 title = "Title",
                 overview = "Overview",
-                _posterPath = "path",
+                posterImage = Image.Poster(
+                    path = "/poster1.jpg",
+                    sizes = listOf(
+                        "w320", "w500", "w720"
+                    ),
+                    secureBaseUrl = "https://test.com/"
+                ),
+                backdropImage = Image.Backdrop(
+                    path = "/backdrop1.jpg",
+                    sizes = listOf(
+                        "w320", "w500", "w720"
+                    ),
+                    secureBaseUrl = "https://test.com/"
+                ),
                 budget = 10_000,
                 genres = emptyList(),
                 imdbId = "123",
@@ -156,7 +198,20 @@ internal class MovieMapperTest {
                 id = Movie.Id(2),
                 title = "Title",
                 overview = "Overview",
-                _posterPath = "path",
+                posterImage = Image.Poster(
+                    path = "/poster2.jpg",
+                    sizes = listOf(
+                        "w320", "w500", "w720"
+                    ),
+                    secureBaseUrl = "https://test.com/"
+                ),
+                backdropImage = Image.Backdrop(
+                    path = "/backdrop2.jpg",
+                    sizes = listOf(
+                        "w320", "w500", "w720"
+                    ),
+                    secureBaseUrl = "https://test.com/"
+                ),
                 budget = 10_000,
                 genres = emptyList(),
                 imdbId = "123",
@@ -170,7 +225,7 @@ internal class MovieMapperTest {
             )
         )
 
-        val actual = mapper.mapToList(list)
+        val actual = mapper.mapToList(list, defaultImageConfig)
 
         Assert.assertEquals(expected, actual)
     }

@@ -16,19 +16,19 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.n0lik.sample.common.AppDependency
 import com.n0lik.sample.common.di.Injectable
+import com.n0lik.sample.common.model.Image
 import com.n0lik.sample.common.ui.adapter.DelegateAdapter
 import com.n0lik.sample.common.ui.adapter.diffUtilBuilder
+import com.n0lik.sample.common.ui.ext.loadTmdbImage
 import com.n0lik.sample.common.ui.ext.removeAdapterOnDetach
 import com.n0lik.sample.common.ui.ext.visibleIf
 import com.n0lik.sample.common.ui.utils.CropOptions
-import com.n0lik.sample.common.ui.utils.loadImage
 import com.n0lik.sample.common.ui.widget.recyclerview.SpacingItemDecorator
 import com.n0lik.sample.genres.di.DaggerGenreComponent
 import com.n0lik.sample.movie.DaggerMovieDetailComponent
 import com.n0lik.sample.movie.impl.R
 import com.n0lik.sample.movie.impl.databinding.MovieDetailFragmentBinding
 import com.n0lik.sample.movie.model.Movie
-import com.n0lik.sample.movie.model.TmdbImage
 import com.n0lik.sample.movie.presentation.delegates.movieAdapterDelegate
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -38,6 +38,7 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
     private var _binding: MovieDetailFragmentBinding? = null
     private val binding
         get() = _binding!!
@@ -103,17 +104,7 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
     private fun observeUiState() {
         binding.movieDetailSwipeRefresh.setOnRefreshListener { viewModel.load() }
         lifecycleScope.launchWhenCreated {
-            viewModel.viewState.collect { uiModel ->
-                binding.movieDetailSwipeRefresh.isRefreshing = uiModel.state == Loading
-                when (uiModel.state) {
-                    is Error -> {
-                        //TODO it will be fixed later
-                        Toast.makeText(requireContext(), "Some error!", Toast.LENGTH_LONG).show()
-                    }
-                    is Success -> render(uiModel)
-                    else -> Unit
-                }
-            }
+            viewModel.viewState.collect { uiModel -> render(uiModel) }
         }
     }
 
@@ -132,9 +123,14 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
     }
 
     private fun render(uiModel: MovieDetailUiModel) {
+        binding.movieDetailSwipeRefresh.isRefreshing = uiModel.state == Loading
+        if (uiModel.state is Error) {
+            //TODO it will be fixed later
+            Toast.makeText(requireContext(), "Some error!", Toast.LENGTH_LONG).show()
+        }
         with(binding) {
-            showPoster(uiModel.movie?.posterPath)
-            showBackdrop(uiModel.backdrops)
+            showPoster(uiModel.movie?.posterImage)
+            showBackdrop(uiModel.movie?.backdropImage)
             movieDetailTitle.text = uiModel.movie?.title
             movieDetailDescription.text = uiModel.movie?.overview
             showSimilarMovies(uiModel.similarMovies)
@@ -154,21 +150,17 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
         }
     }
 
-    private fun showPoster(url: String?) {
-        url?.also {
-            binding.movieDetailPoster.loadImage(it) {
-                cornerRadius = posterCornerRadius
-                this
-            }
+    private fun showPoster(posterImage: Image?) {
+        binding.movieDetailPoster.loadTmdbImage(posterImage) {
+            cornerRadius = posterCornerRadius
+            this
         }
     }
 
-    private fun showBackdrop(images: List<TmdbImage>?) {
-        images?.firstOrNull()?.getFullPath()?.also {
-            binding.movieHeaderImage.loadImage(it) {
-                cropOptions = CropOptions.CenterCrop
-                this
-            }
+    private fun showBackdrop(backdropImage: Image?) {
+        binding.movieHeaderImage.loadTmdbImage(backdropImage) {
+            cropOptions = CropOptions.CenterCrop
+            this
         }
     }
 

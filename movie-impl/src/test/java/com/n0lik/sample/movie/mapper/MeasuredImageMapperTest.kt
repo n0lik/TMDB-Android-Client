@@ -1,14 +1,14 @@
 package com.n0lik.sample.movie.mapper
 
 import com.n0lik.sample.movie.data.api.dto.MovieImagesDto
+import com.n0lik.sample.movie.model.MeasuredImage
 import com.n0lik.sample.movie.model.MovieImages
-import com.n0lik.sample.movie.model.TmdbImage
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-internal class ImageMapperTest {
+internal class MeasuredImageMapperTest {
 
-    private val mapper = ImageMapper()
+    private val mapper = MeasuredImageMapper()
 
     @Test
     fun `should map correctly`() {
@@ -30,16 +30,14 @@ internal class ImageMapperTest {
         )
         val expected = MovieImages(
             backdrops = listOf(
-                TmdbImage(
-                    imageType = TmdbImage.ImageType.BACKDROP,
+                MeasuredImage.Backdrop(
                     path = "/pathBackdrop",
                     width = 1,
                     height = 2
                 )
             ),
             posters = listOf(
-                TmdbImage(
-                    imageType = TmdbImage.ImageType.POSTER,
+                MeasuredImage.Poster(
                     path = "/pathPosters",
                     width = 3,
                     height = 4

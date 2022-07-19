@@ -1,8 +1,11 @@
 package com.n0lik.sample.movie.mapper
 
-import com.n0lik.sample.common.mapper.MapperTo
+import com.n0lik.sample.common.mapper.Mapper1
+import com.n0lik.sample.common.mapper.Mapper0
+import com.n0lik.sample.common.model.ImageConfig
 import com.n0lik.sample.genres.data.api.dto.GenreDto
 import com.n0lik.sample.genres.model.Genre
+import com.n0lik.sample.movie.builder.TmdbImageFactory
 import com.n0lik.sample.movie.data.api.dto.LanguageDto
 import com.n0lik.sample.movie.data.api.dto.MovieDto
 import com.n0lik.sample.movie.data.api.dto.ProductionCompanyDto
@@ -13,29 +16,31 @@ import javax.inject.Inject
 
 internal class MovieMapper
 @Inject constructor(
-    private val genreMapper: MapperTo<GenreDto, Genre>,
-    private val productionCompanyMapper: MapperTo<ProductionCompanyDto, ProductionCompany>,
-    private val languageMapper: MapperTo<LanguageDto, Language>
-) : MapperTo<MovieDto, Movie> {
+    private val genreMapper: Mapper0<GenreDto, Genre>,
+    private val productionCompanyMapper: Mapper0<ProductionCompanyDto, ProductionCompany>,
+    private val languageMapper: Mapper0<LanguageDto, Language>,
+    private val imageFactory: TmdbImageFactory
+) : Mapper1<MovieDto, ImageConfig, Movie> {
 
-    override fun mapTo(model: MovieDto): Movie {
-        val genres = model.genres?.let { genreMapper.mapToList(it) }
-        val productionCompanies = model.productionCompanies?.let { productionCompanyMapper.mapToList(it) }
-        val spokenLanguages = model.spokenLanguages?.let { languageMapper.mapToList(it) }
+    override fun mapTo(t1: MovieDto, t2: ImageConfig): Movie {
+        val genres = t1.genres?.let { genreMapper.mapToList(it) }
+        val productionCompanies = t1.productionCompanies?.let { productionCompanyMapper.mapToList(it) }
+        val spokenLanguages = t1.spokenLanguages?.let { languageMapper.mapToList(it) }
 
         return Movie(
-            id = Movie.Id(model.id ?: 0),
-            title = model.title,
+            id = Movie.Id(t1.id ?: 0),
+            title = t1.title,
             genres = genres,
-            budget = model.budget,
-            imdbId = model.imdbId,
-            originalTitle = model.originalTitle,
-            _posterPath = model.posterPath,
-            overview = model.overview,
-            releaseDate = model.releaseDate,
-            video = model.isVideo,
-            voteAverage = model.voteAverage,
-            voteCount = model.voteCount,
+            backdropImage = imageFactory.createBackdrop(t2, t1.backdropPath),
+            posterImage = imageFactory.createPoster(t2, t1.posterPath),
+            budget = t1.budget,
+            imdbId = t1.imdbId,
+            originalTitle = t1.originalTitle,
+            overview = t1.overview,
+            releaseDate = t1.releaseDate,
+            video = t1.isVideo,
+            voteAverage = t1.voteAverage,
+            voteCount = t1.voteCount,
             productionCompanies = productionCompanies,
             languages = spokenLanguages
         )

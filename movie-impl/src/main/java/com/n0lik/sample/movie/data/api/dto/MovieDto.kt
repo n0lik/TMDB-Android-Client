@@ -28,6 +28,8 @@ internal data class MovieDto(
     val popularity: Double?,
     @SerialName("poster_path")
     val posterPath: String?,
+    @SerialName("backdrop_path")
+    val backdropPath: String?,
     @SerialName("production_companies")
     val productionCompanies: List<ProductionCompanyDto>?,
     @SerialName("production_countries")

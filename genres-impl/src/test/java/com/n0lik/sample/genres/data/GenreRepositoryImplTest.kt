@@ -1,7 +1,7 @@
 package com.n0lik.sample.genres.data
 
 import com.n0lik.common.test.dispatcher.TestAppDispatcher
-import com.n0lik.sample.common.mapper.MapperTo
+import com.n0lik.sample.common.mapper.Mapper0
 import com.n0lik.sample.genres.data.api.GenresApi
 import com.n0lik.sample.genres.data.api.dto.GenreDto
 import com.n0lik.sample.genres.data.api.dto.GenresDto
@@ -20,7 +20,7 @@ import org.junit.Test
 @ExperimentalCoroutinesApi
 class GenreRepositoryImplTest {
 
-    private val mapper = mockk<MapperTo<GenreDto, Genre>>()
+    private val mapper = mockk<Mapper0<GenreDto, Genre>>()
     private val dispatcher = TestAppDispatcher()
     private val mockApi = mockk<GenresApi>()
 

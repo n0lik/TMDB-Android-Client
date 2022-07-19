@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-
+    implementation(project(":common-api"))
     implementation(libs.coroutine.core)
     implementation(libs.coroutine.android)
     implementation(libs.lifecycle.runtime)

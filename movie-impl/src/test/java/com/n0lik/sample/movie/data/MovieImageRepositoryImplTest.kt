@@ -3,7 +3,7 @@ package com.n0lik.sample.movie.data
 import com.n0lik.common.test.dispatcher.TestAppDispatcher
 import com.n0lik.common.test.ext.mockkRelaxed
 import com.n0lik.sample.movie.data.api.MovieImageApi
-import com.n0lik.sample.movie.mapper.ImageMapper
+import com.n0lik.sample.movie.mapper.MeasuredImageMapper
 import com.n0lik.sample.movie.model.Movie
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -17,7 +17,7 @@ import java.net.UnknownHostException
 internal class MovieImageRepositoryImplTest {
 
     private val mockMovieImageApi = mockk<MovieImageApi>()
-    private val mapper = ImageMapper()
+    private val mapper = MeasuredImageMapper()
 
     private val repository = MovieImageRepositoryImpl(
         appDispatcher = TestAppDispatcher(),

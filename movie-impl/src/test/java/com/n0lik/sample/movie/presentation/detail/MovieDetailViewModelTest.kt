@@ -1,11 +1,13 @@
 package com.n0lik.sample.movie.presentation.detail
 
 import com.n0lik.common.test.ext.mockkRelaxed
+import com.n0lik.sample.common.model.Image
 import com.n0lik.sample.movie.domain.MovieDetailInteractor
 import com.n0lik.sample.movie.model.Movie
 import com.n0lik.sample.movie.model.MovieDetail
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -54,9 +56,7 @@ internal class MovieDetailViewModelTest {
             isFavorite = false,
             state = Loading,
             movie = null,
-            similarMovies = null,
-            posters = null,
-            backdrops = null
+            similarMovies = null
         )
         val viewModel = MovieDetailViewModel(1, mockMovieDetailInteractor)
         val actual = viewModel.viewState.first()
@@ -71,11 +71,21 @@ internal class MovieDetailViewModelTest {
         } returns flowOf(
             MovieDetail(
                 isFavorite = true,
-                movie = Movie(
+                movie =
+                Movie(
                     id = Movie.Id(1),
                     title = "Title",
                     overview = "Overview",
-                    _posterPath = "path",
+                    posterImage = Image.Poster(
+                        path = "/poster.jpg",
+                        secureBaseUrl = "https://test.com/",
+                        sizes = emptyList()
+                    ),
+                    backdropImage = Image.Backdrop(
+                        path = "/backdrop.jpg",
+                        secureBaseUrl = "https://test.com/",
+                        sizes = emptyList()
+                    ),
                     budget = 10_000,
                     genres = emptyList(),
                     imdbId = "123",
@@ -88,8 +98,6 @@ internal class MovieDetailViewModelTest {
                     video = true
                 ),
                 similarMovies = null,
-                posters = listOf(),
-                backdrops = listOf()
             )
         )
 
@@ -100,7 +108,16 @@ internal class MovieDetailViewModelTest {
                 id = Movie.Id(1),
                 title = "Title",
                 overview = "Overview",
-                _posterPath = "path",
+                posterImage = Image.Poster(
+                    path = "/poster.jpg",
+                    secureBaseUrl = "https://test.com/",
+                    sizes = emptyList()
+                ),
+                backdropImage = Image.Backdrop(
+                    path = "/backdrop.jpg",
+                    secureBaseUrl = "https://test.com/",
+                    sizes = emptyList()
+                ),
                 budget = 10_000,
                 genres = emptyList(),
                 imdbId = "123",
@@ -112,9 +129,7 @@ internal class MovieDetailViewModelTest {
                 voteCount = 1,
                 video = true
             ),
-            similarMovies = null,
-            posters = listOf(),
-            backdrops = listOf()
+            similarMovies = null
         )
         val viewModel = MovieDetailViewModel(1, mockMovieDetailInteractor)
         viewModel.load()
@@ -133,8 +148,6 @@ internal class MovieDetailViewModelTest {
             isFavorite = false,
             movie = null,
             state = Error(exception),
-            backdrops = null,
-            posters = null,
             similarMovies = null
         )
 
@@ -148,25 +161,10 @@ internal class MovieDetailViewModelTest {
         coEvery { mockMovieDetailInteractor.getMovieDetail(Movie.Id(1)) } returns flowOf(
             MovieDetail(
                 isFavorite = false,
-                movie = Movie(
-                    id = Movie.Id(1),
-                    title = "Title",
-                    overview = "Overview",
-                    _posterPath = "path",
-                    budget = 10_000,
-                    genres = emptyList(),
-                    imdbId = "123",
-                    languages = emptyList(),
-                    originalTitle = "Original title",
-                    productionCompanies = emptyList(),
-                    releaseDate = null,
-                    voteAverage = 1.0,
-                    voteCount = 1,
-                    video = true
-                ),
-                similarMovies = null,
-                posters = listOf(),
-                backdrops = listOf()
+                movie = mockkRelaxed {
+                    every { id } returns Movie.Id(1)
+                },
+                similarMovies = null
             )
         )
         val viewModel = MovieDetailViewModel(1, mockMovieDetailInteractor)
@@ -183,25 +181,10 @@ internal class MovieDetailViewModelTest {
         coEvery { mockMovieDetailInteractor.getMovieDetail(Movie.Id(1)) } returns flowOf(
             MovieDetail(
                 isFavorite = true,
-                movie = Movie(
-                    id = Movie.Id(1),
-                    title = "Title",
-                    overview = "Overview",
-                    _posterPath = "path",
-                    budget = 10_000,
-                    genres = emptyList(),
-                    imdbId = "123",
-                    languages = emptyList(),
-                    originalTitle = "Original title",
-                    productionCompanies = emptyList(),
-                    releaseDate = null,
-                    voteAverage = 1.0,
-                    voteCount = 1,
-                    video = true
-                ),
-                similarMovies = null,
-                posters = listOf(),
-                backdrops = listOf()
+                movie = mockkRelaxed {
+                    every { id } returns Movie.Id(1)
+                },
+                similarMovies = null
             )
         )
         val viewModel = MovieDetailViewModel(1, mockMovieDetailInteractor)

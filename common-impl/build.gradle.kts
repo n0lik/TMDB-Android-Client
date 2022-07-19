@@ -18,6 +18,9 @@ android {
 
 dependencies {
     implementation(project(":common-api"))
+    
+    implementation(libs.androidx.core)
+    implementation(libs.androidx.securityCrypto)
 
     kapt(libs.dagger.compiler)
     implementation(libs.dagger.core)

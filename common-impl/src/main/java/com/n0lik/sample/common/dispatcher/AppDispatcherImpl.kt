@@ -1,11 +1,9 @@
 package com.n0lik.sample.common.dispatcher
 
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
-internal class AppDispatcherImpl
-@Inject constructor() : AppDispatcher {
+internal class AppDispatcherImpl : AppDispatcher {
 
     override val io: CoroutineDispatcher = Dispatchers.IO
     override val main: CoroutineDispatcher = Dispatchers.Main

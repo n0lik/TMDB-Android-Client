@@ -5,11 +5,11 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.n0lik.sample.common.ui.utils.load
+import com.n0lik.sample.common.ui.ext.loadTmdbImage
 import com.n0lik.sample.movie.impl.databinding.MovieItemBinding
 import com.n0lik.sample.movie.model.Movie
 
-class PopularMovieAdapter(
+internal class PopularMovieAdapter(
     private val onClick: MovieClickListener
 ) : PagingDataAdapter<Movie, MovieViewHolder>(diffCallback = DIFF) {
 
@@ -37,7 +37,7 @@ class PopularMovieAdapter(
 
 typealias MovieClickListener = (Movie) -> Unit
 
-class MovieViewHolder
+internal class MovieViewHolder
 constructor(
     private val onClick: MovieClickListener,
     private val binding: MovieItemBinding
@@ -46,7 +46,7 @@ constructor(
     fun bind(movie: Movie) {
         with(binding) {
             root.setOnClickListener { onClick.invoke(movie) }
-            itemMoviePoster.load(movie.posterPath)
+            itemMoviePoster.loadTmdbImage(movie.posterImage)
         }
     }
 }

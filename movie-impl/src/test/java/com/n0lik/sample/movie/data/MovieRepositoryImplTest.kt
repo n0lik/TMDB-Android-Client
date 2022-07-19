@@ -4,6 +4,8 @@ import com.n0lik.common.test.dispatcher.TestAppDispatcher
 import com.n0lik.common.test.ext.mockkRelaxed
 import com.n0lik.common.test.response.CONTENT_NOT_FOUND_JSON
 import com.n0lik.common.test.response.toResponseBody
+import com.n0lik.sample.common.domain.ConfigRepository
+import com.n0lik.sample.common.model.ImageConfig
 import com.n0lik.sample.movie.data.api.MovieApi
 import com.n0lik.sample.movie.data.api.dto.MovieDto
 import com.n0lik.sample.movie.data.api.dto.PagedListDto
@@ -28,23 +30,37 @@ class MovieRepositoryImplTest {
     private val movieApiMock = mockk<MovieApi>()
     private val movieMapper = mockk<MovieMapper>()
 
+    private val defaultImageConfig = ImageConfig(
+        backdropSizes = listOf(
+            "w320", "w500", "w720"
+        ),
+        posterSizes = listOf(
+            "w320", "w500", "w720"
+        ),
+        secureBaseUrl = "https://test.com/"
+    )
+    private val configRepository = mockk<ConfigRepository> {
+        coEvery { getImageConfig() } returns defaultImageConfig
+    }
+
     private val repository = MovieRepositoryImpl(
         dispatcher = dispatcher,
         movieApi = movieApiMock,
-        movieMapper = movieMapper
+        movieMapper = movieMapper,
+        configRepository = configRepository
     )
 
     @Test
     fun `should load movie by id`() = runTest {
         coEvery { movieApiMock.getMovieById(1) } returns mockkRelaxed()
-        every { movieMapper.mapTo(any()) } returns mockk()
+        every { movieMapper.mapTo(any(), any()) } returns mockk()
 
         val actual = repository.getMovie(Movie.Id(1))
 
         assertNotNull(actual)
         coVerify {
             movieApiMock.getMovieById(1)
-            movieMapper.mapTo(any())
+            movieMapper.mapTo(any(), any())
         }
     }
 
@@ -66,7 +82,7 @@ class MovieRepositoryImplTest {
             totalResults = 3
         )
         coEvery { movieApiMock.getSimilarMovies(1) } returns model
-        every { movieMapper.mapToList(any()) } returns emptyList()
+        every { movieMapper.mapToList(any(), any()) } returns emptyList()
         val expected = emptyList<Movie>()
 
         val actual = repository.getSimilarMovies(Movie.Id(1))
@@ -74,7 +90,7 @@ class MovieRepositoryImplTest {
         assertEquals(expected, actual)
         coVerify {
             movieApiMock.getSimilarMovies(1)
-            movieMapper.mapToList(emptyList())
+            movieMapper.mapToList(emptyList(), defaultImageConfig)
         }
     }
 }

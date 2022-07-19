@@ -11,7 +11,8 @@ import javax.inject.Singleton
     modules = [
         AppModule::class,
         RetrofitNetworkModule::class,
-        KtorNetworkModule::class
+        KtorNetworkModule::class,
+        ConfigModule::class
     ]
 )
 interface AppComponent : AppDependency {

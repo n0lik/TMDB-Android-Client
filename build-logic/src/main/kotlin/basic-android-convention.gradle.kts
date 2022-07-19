@@ -12,7 +12,7 @@ configure<BaseExtension> {
     buildToolsVersion = "32.0.0"
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 23
         setTargetSdkVersion(32)
 
         versionCode = 1

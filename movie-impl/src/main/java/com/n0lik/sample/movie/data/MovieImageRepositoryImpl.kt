@@ -1,7 +1,7 @@
 package com.n0lik.sample.movie.data
 
 import com.n0lik.sample.common.dispatcher.AppDispatcher
-import com.n0lik.sample.common.mapper.MapperTo
+import com.n0lik.sample.common.mapper.Mapper0
 import com.n0lik.sample.movie.data.api.MovieImageApi
 import com.n0lik.sample.movie.data.api.dto.MovieImagesDto
 import com.n0lik.sample.movie.model.Movie
@@ -13,7 +13,7 @@ internal class MovieImageRepositoryImpl
 @Inject constructor(
     private val appDispatcher: AppDispatcher,
     private val movieImageApi: MovieImageApi,
-    private val mapper: MapperTo<MovieImagesDto, MovieImages>
+    private val mapper: Mapper0<MovieImagesDto, MovieImages>
 ) : MovieImageRepository {
 
     override suspend fun getImages(movieId: Movie.Id): MovieImages {

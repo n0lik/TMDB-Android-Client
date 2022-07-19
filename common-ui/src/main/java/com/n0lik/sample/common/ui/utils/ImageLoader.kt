@@ -26,7 +26,7 @@ fun ImageView.load(url: String?) {
 }
 
 @SuppressLint("CheckResult")
-fun ImageView.loadImage(
+fun ImageView.loadImageByUrl(
     url: String?,
     requestOptions: RequestOptions.() -> RequestOptions = { this }
 ) {
@@ -67,7 +67,7 @@ fun ImageView.loadImage(
 }
 
 @SuppressLint("CheckResult")
-internal fun mapOptions(options: RequestOptions): GlideRequestOptions {
+private fun mapOptions(options: RequestOptions): GlideRequestOptions {
     val result = GlideRequestOptions()
     val transformations = mutableListOf<Transformation<Bitmap>>()
 
