@@ -7,7 +7,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
-import com.n0lik.sample.movie.impl.databinding.ActivityMovieBinding
+import com.n0lik.sample.databinding.ActivityMovieBinding
 
 class MainActivity : AppCompatActivity() {
 

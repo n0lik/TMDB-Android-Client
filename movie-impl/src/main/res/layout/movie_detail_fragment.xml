@@ -108,7 +108,8 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:visibility="gone"
-                    app:constraint_referenced_ids="movie_detail_similar_title, movie_detail_similar_movies" />
+                    app:constraint_referenced_ids="movie_detail_similar_title, movie_detail_similar_movies"
+                    tools:visibility="visible" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
@@ -117,6 +118,7 @@
             android:id="@+id/movie_detail_app_bar"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
+            android:theme="@style/TransparentActionBarTheme"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
