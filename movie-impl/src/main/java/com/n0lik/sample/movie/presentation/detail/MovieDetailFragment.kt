@@ -2,8 +2,6 @@ package com.n0lik.sample.movie.presentation.detail
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +28,6 @@ import com.n0lik.sample.movie.impl.R
 import com.n0lik.sample.movie.impl.databinding.MovieDetailFragmentBinding
 import com.n0lik.sample.movie.model.Movie
 import com.n0lik.sample.movie.presentation.delegates.movieAdapterDelegate
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @Suppress("TooManyFunctions")
@@ -47,28 +44,18 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
     private val posterCornerRadius: Int by lazy(LazyThreadSafetyMode.NONE) {
         resources.getDimensionPixelSize(R.dimen.movie_detail_poster_corner_radius)
     }
-
     private val similarMoviesAdapter = DelegateAdapter(
         movieAdapterDelegate { openMovieDetail(it) },
         diffUtil = diffUtilBuilder({ old: Movie, new: Movie -> old.id == new.id })
     )
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.movie_detail_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
-        favoriteMenuItem = menu.findItem(R.id.favorite_menu_item)
-        observeFavoriteState()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.favorite_menu_item) {
-            viewModel.onFavoriteClick()
-        }
-        return super.onOptionsItemSelected(item)
+    override fun inject(dependency: AppDependency) {
+        val movieId = requireArguments().get("movieId") as Int
+        val genreComponent = DaggerGenreComponent.factory()
+            .build(dependency)
+        DaggerMovieDetailComponent.factory()
+            .build(movieId, dependency, genreComponent)
+            .inject(this)
     }
 
     override fun onCreateView(
@@ -82,14 +69,37 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setHasOptionsMenu(true)
+        setupUi()
+        observeUiState()
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
+    }
+
+    private fun setupUi() {
+        with(binding.movieDetailSwipeRefresh) {
+            setOnRefreshListener { viewModel.load() }
+            setOnChildScrollUpCallback { _, _ -> binding.movieDetailScroll.canScrollVertically(-1) }
+        }
         binding.movieDetailSimilarMovies.apply {
             adapter = similarMoviesAdapter
             addItemDecoration(SpacingItemDecorator(resources.getDimensionPixelSize(R.dimen.movie_detail_item_space)))
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             removeAdapterOnDetach()
         }
-        observeUiState()
+        with(binding.movieDetailToolbar) {
+            setNavigationIcon(R.drawable.ic_arrow_back)
+            setNavigationOnClickListener { activity?.onBackPressed() }
+            favoriteMenuItem = menu.findItem(R.id.favorite_menu_item)
+            setOnMenuItemClickListener {
+                if (it.itemId == R.id.favorite_menu_item) {
+                    viewModel.onFavoriteClick()
+                }
+                false
+            }
+        }
     }
 
     private fun openMovieDetail(movie: Movie) {
@@ -102,24 +112,9 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
     }
 
     private fun observeUiState() {
-        binding.movieDetailSwipeRefresh.setOnRefreshListener { viewModel.load() }
         lifecycleScope.launchWhenCreated {
             viewModel.viewState.collect { uiModel -> render(uiModel) }
         }
-    }
-
-    override fun onDestroyView() {
-        _binding = null
-        super.onDestroyView()
-    }
-
-    override fun inject(dependency: AppDependency) {
-        val movieId = requireArguments().get("movieId") as Int
-        val genreComponent = DaggerGenreComponent.factory()
-            .build(dependency)
-        DaggerMovieDetailComponent.factory()
-            .build(movieId, dependency, genreComponent)
-            .inject(this)
     }
 
     private fun render(uiModel: MovieDetailUiModel) {
@@ -135,19 +130,12 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
             movieDetailDescription.text = uiModel.movie?.overview
             showSimilarMovies(uiModel.similarMovies)
         }
+        updateFavoriteIcon(uiModel.isFavorite)
     }
 
     private fun showSimilarMovies(movies: List<Movie>?) {
         binding.movieDetailSimilarGroup.visibleIf(!movies.isNullOrEmpty())
         movies?.also { similarMoviesAdapter.setItems(it) }
-    }
-
-    private fun observeFavoriteState() {
-        lifecycleScope.launchWhenResumed {
-            viewModel.viewState
-                .map { it.isFavorite }
-                .collect { updateFavoriteIcon(it) }
-        }
     }
 
     private fun showPoster(posterImage: Image?) {
