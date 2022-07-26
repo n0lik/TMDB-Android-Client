@@ -1,6 +1,7 @@
 package com.n0lik.sample.movie.mapper
 
 import com.n0lik.common.test.ext.mockkRelaxed
+import com.n0lik.sample.common.mapper.DateMapper
 import com.n0lik.sample.common.mapper.Mapper0
 import com.n0lik.sample.common.model.Image
 import com.n0lik.sample.common.model.ImageConfig
@@ -37,12 +38,14 @@ internal class MovieMapperTest {
         ),
         secureBaseUrl = "https://test.com/"
     )
+    private val dateMapper = DateMapper()
 
     private val mapper = MovieMapper(
         genreMapper = genreMapperMock,
         productionCompanyMapper = productionCompanyMapperMock,
         languageMapper = languageMapperMock,
-        imageFactory = TmdbImageFactory()
+        imageFactory = TmdbImageFactory(),
+        dateMapper = dateMapper
     )
 
     @Test
@@ -64,7 +67,7 @@ internal class MovieMapperTest {
             productionCountries = emptyList(),
             isVideo = true,
             revenue = null,
-            releaseDate = null,
+            releaseDate = "2022-01-01",
             spokenLanguages = emptyList(),
             homepage = null,
             originalLanguage = null,
@@ -97,7 +100,7 @@ internal class MovieMapperTest {
             languages = emptyList(),
             originalTitle = "Original title",
             productionCompanies = emptyList(),
-            releaseDate = null,
+            releaseDate = "2022",
             voteAverage = 1.0,
             voteCount = 1,
             video = true

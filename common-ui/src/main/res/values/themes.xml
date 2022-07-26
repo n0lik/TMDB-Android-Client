@@ -11,6 +11,8 @@
         <item name="colorOnSecondary">@color/black</item>
         <item name="android:statusBarColor">?attr/colorOnSecondary</item>
         <item name="toolbarStyle">@style/DefaultToolbar</item>
+        <item name="choiceChip">@style/ChipChoice</item>
+        <item name="chipGroupStyle">@style/ChipGroup</item>
     </style>
 
     <style name="TransparentActionBarTheme">
@@ -31,5 +33,16 @@
     <style name="TransparentToolbar" parent="Widget.MaterialComponents.Toolbar">
         <item name="titleTextColor">@android:color/transparent</item>
         <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="ChipChoice" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">#02b3e4</item>
+        <item name="chipMinTouchTargetSize">0dp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="ChipGroup" parent="Widget.MaterialComponents.ChipGroup">
+        <item name="chipSpacingVertical">4dp</item>
+        <item name="chipSpacingHorizontal">4dp</item>
     </style>
 </resources>

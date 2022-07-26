@@ -1,7 +1,8 @@
 package com.n0lik.sample.movie.mapper
 
-import com.n0lik.sample.common.mapper.Mapper1
+import com.n0lik.sample.common.mapper.DateMapper
 import com.n0lik.sample.common.mapper.Mapper0
+import com.n0lik.sample.common.mapper.Mapper1
 import com.n0lik.sample.common.model.ImageConfig
 import com.n0lik.sample.genres.data.api.dto.GenreDto
 import com.n0lik.sample.genres.model.Genre
@@ -19,7 +20,8 @@ internal class MovieMapper
     private val genreMapper: Mapper0<GenreDto, Genre>,
     private val productionCompanyMapper: Mapper0<ProductionCompanyDto, ProductionCompany>,
     private val languageMapper: Mapper0<LanguageDto, Language>,
-    private val imageFactory: TmdbImageFactory
+    private val imageFactory: TmdbImageFactory,
+    private val dateMapper: DateMapper
 ) : Mapper1<MovieDto, ImageConfig, Movie> {
 
     override fun mapTo(t1: MovieDto, t2: ImageConfig): Movie {
@@ -37,7 +39,7 @@ internal class MovieMapper
             imdbId = t1.imdbId,
             originalTitle = t1.originalTitle,
             overview = t1.overview,
-            releaseDate = t1.releaseDate,
+            releaseDate = dateMapper.mapToReleaseDate(t1.releaseDate),
             video = t1.isVideo,
             voteAverage = t1.voteAverage,
             voteCount = t1.voteCount,

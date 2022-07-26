@@ -12,17 +12,20 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.chip.Chip
 import com.n0lik.sample.common.AppDependency
 import com.n0lik.sample.common.di.Injectable
 import com.n0lik.sample.common.model.Image
 import com.n0lik.sample.common.ui.adapter.DelegateAdapter
 import com.n0lik.sample.common.ui.adapter.diffUtilBuilder
+import com.n0lik.sample.common.ui.ext.invisibleIf
 import com.n0lik.sample.common.ui.ext.loadTmdbImage
 import com.n0lik.sample.common.ui.ext.removeAdapterOnDetach
 import com.n0lik.sample.common.ui.ext.visibleIf
 import com.n0lik.sample.common.ui.utils.CropOptions
 import com.n0lik.sample.common.ui.widget.recyclerview.SpacingItemDecorator
 import com.n0lik.sample.genres.di.DaggerGenreComponent
+import com.n0lik.sample.genres.model.Genre
 import com.n0lik.sample.movie.DaggerMovieDetailComponent
 import com.n0lik.sample.movie.impl.R
 import com.n0lik.sample.movie.impl.databinding.MovieDetailFragmentBinding
@@ -41,9 +44,7 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
         get() = _binding!!
     private val viewModel: MovieDetailViewModel by viewModels { viewModelFactory }
     private var favoriteMenuItem: MenuItem? = null
-    private val posterCornerRadius: Int by lazy(LazyThreadSafetyMode.NONE) {
-        resources.getDimensionPixelSize(R.dimen.movie_detail_poster_corner_radius)
-    }
+
     private val similarMoviesAdapter = DelegateAdapter(
         movieAdapterDelegate { openMovieDetail(it) },
         diffUtil = diffUtilBuilder({ old: Movie, new: Movie -> old.id == new.id })
@@ -127,8 +128,10 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
             showPoster(uiModel.movie?.posterImage)
             showBackdrop(uiModel.movie?.backdropImage)
             movieDetailTitle.text = uiModel.movie?.title
+            movieDetailReleaseDate.text = uiModel.movie?.releaseDate
             movieDetailDescription.text = uiModel.movie?.overview
             showSimilarMovies(uiModel.similarMovies)
+            showGenres(uiModel.movie?.genres)
         }
         updateFavoriteIcon(uiModel.isFavorite)
     }
@@ -139,16 +142,19 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
     }
 
     private fun showPoster(posterImage: Image?) {
-        binding.movieDetailPoster.loadTmdbImage(posterImage) {
-            cornerRadius = posterCornerRadius
-            this
+        binding.movieDetailPosterLayout.apply {
+            card.invisibleIf(posterImage == null)
+            poster.loadTmdbImage(posterImage)
         }
     }
 
     private fun showBackdrop(backdropImage: Image?) {
-        binding.movieHeaderImage.loadTmdbImage(backdropImage) {
-            cropOptions = CropOptions.CenterCrop
-            this
+        binding.movieHeaderImage.apply {
+            invisibleIf(backdropImage == null)
+            loadTmdbImage(backdropImage) {
+                cropOptions = CropOptions.CenterCrop
+                this
+            }
         }
     }
 
@@ -161,5 +167,21 @@ class MovieDetailFragment : Fragment(R.layout.movie_detail_fragment), Injectable
             }
             setIcon(drawableResId)
         }
+    }
+
+    private fun showGenres(genres: List<Genre>?) {
+        with(binding.movieDetailGenres) {
+            visibleIf(!genres.isNullOrEmpty())
+            removeAllViews()
+            genres?.forEach {
+                addView(createChip(it.name!!))
+            }
+        }
+    }
+
+    private fun createChip(title: String) = Chip(
+        requireContext(), null, R.attr.choiceChip
+    ).apply {
+        text = title
     }
 }

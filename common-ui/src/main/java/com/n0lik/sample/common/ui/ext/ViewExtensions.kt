@@ -5,3 +5,7 @@ import android.view.View
 fun View.visibleIf(isVisible: Boolean) {
     this.visibility = if (isVisible) View.VISIBLE else View.GONE
 }
+
+fun View.invisibleIf(state: Boolean) {
+    this.visibility = if (state) View.INVISIBLE else View.VISIBLE
+}

@@ -6,8 +6,22 @@
 
     <dimen name="movie_detail_poster_corner_radius">16dp</dimen>
     <dimen name="movie_detail_item_space">16dp</dimen>
-    <dimen name="movie_detail_header_view_height">180dp</dimen>
+    <dimen name="movie_detail_header_view_height">200dp</dimen>
     <dimen name="movie_detail_poster_view_height">220dp</dimen>
     <dimen name="movie_detail_poster_view_width">150dp</dimen>
 
+    <style name="GenresGroupStyle" parent="ChipGroup">
+        <item name="android:clickable">false</item>
+    </style>
+
+    <style name="DescriptionTextStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:clickable">true</item>
+        <item name="android:textIsSelectable">true</item>
+    </style>
+
+    <style name="TitleTextStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:clickable">true</item>
+        <item name="android:textIsSelectable">true</item>
+        <item name="android:textAppearance">?android:textAppearanceLarge</item>
+    </style>
 </resources>
