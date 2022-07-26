@@ -2,7 +2,6 @@ package com.n0lik.sample.movie.data.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.n0lik.common.test.dispatcher.TestAppDispatcher
 import com.n0lik.sample.common.domain.ConfigRepository
 import com.n0lik.sample.common.mapper.Mapper1
 import com.n0lik.sample.common.model.ImageConfig
@@ -24,7 +23,6 @@ import java.net.UnknownHostException
 @ExperimentalCoroutinesApi
 internal class PopularMovieDataSourceTest {
 
-    private val testDispatcher = TestAppDispatcher()
     private val movieKtorApiMock = mockk<MovieKtorApi>()
     private val mapper = mockk<Mapper1<PagedListDto<MovieDto>, ImageConfig, PagingSource.LoadResult<Int, Movie>>>()
     private val configRepository = mockk<ConfigRepository> {
@@ -50,7 +48,6 @@ internal class PopularMovieDataSourceTest {
         val pagingSource = PopularMovieDataSource(
             movieApi = movieKtorApiMock,
             mapper = mapper,
-            appDispatcher = testDispatcher,
             configRepository = configRepository
         )
         val expected = PagingSource.LoadResult.Page(
@@ -92,7 +89,6 @@ internal class PopularMovieDataSourceTest {
         val pagingSource = PopularMovieDataSource(
             movieApi = movieKtorApiMock,
             mapper = mapper,
-            appDispatcher = testDispatcher,
             configRepository = configRepository
         )
         val expectedLoadResult0 = PagingSource.LoadResult.Page(
@@ -147,7 +143,6 @@ internal class PopularMovieDataSourceTest {
         val pagingSource = PopularMovieDataSource(
             movieApi = movieKtorApiMock,
             mapper = mapper,
-            appDispatcher = testDispatcher,
             configRepository = configRepository
         )
         val expected = START_PAGE_NUMBER
@@ -164,7 +159,7 @@ internal class PopularMovieDataSourceTest {
         assertEquals(expected, actual)
     }
 
-    @Test(expected = UnknownHostException::class)
+    @Test
     fun `should return error when api fail`() = runTest {
         coEvery { movieKtorApiMock.getPopularMovies(1) } throws UnknownHostException()
         every { mapper.mapTo(any(), any()) } returns PagingSource.LoadResult.Page(
@@ -175,15 +170,18 @@ internal class PopularMovieDataSourceTest {
         val pagingSource = PopularMovieDataSource(
             movieApi = movieKtorApiMock,
             mapper = mapper,
-            appDispatcher = testDispatcher,
             configRepository = configRepository
         )
-        pagingSource.load(
+        val expected = UnknownHostException::class
+
+        val actual = (pagingSource.load(
             PagingSource.LoadParams.Refresh(
                 loadSize = 20,
                 key = 1,
                 placeholdersEnabled = false
             )
-        ) as PagingSource.LoadResult.Error<Int, Movie>
+        ) as PagingSource.LoadResult.Error<Int, Movie>).throwable::class
+
+        assertEquals(expected, actual)
     }
 }
