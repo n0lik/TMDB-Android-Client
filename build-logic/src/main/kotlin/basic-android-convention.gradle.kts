@@ -8,12 +8,12 @@ import com.android.builder.internal.BaseConfigImpl
 
 configure<BaseExtension> {
 
-    setCompileSdkVersion(32)
-    buildToolsVersion = "32.0.0"
+    setCompileSdkVersion(33)
+    buildToolsVersion = "33.0.1"
 
     defaultConfig {
         minSdk = 21
-        setTargetSdkVersion(32)
+        setTargetSdkVersion(33)
 
         versionCode = 1
         versionName = "1.0.0"
