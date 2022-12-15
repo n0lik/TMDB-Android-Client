@@ -2,6 +2,10 @@ plugins {
     id("android-library-convention")
 }
 
+android {
+    namespace = "com.n0lik.sample.common.ui"
+}
+
 dependencies {
 
     implementation(libs.coroutine.core)

@@ -36,7 +36,6 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             val pluginId = requested.id.id
-            println("PluginId = $pluginId")
             when {
                 pluginId.startsWith("org.jetbrains.kotlin") -> useVersion("1.7.22")
                 pluginId.startsWith("com.android.") -> useVersion("7.3.1")

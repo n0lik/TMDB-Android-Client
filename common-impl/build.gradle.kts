@@ -6,6 +6,8 @@ plugins {
 }
 
 android {
+    namespace = "com.n0lik.sample.common.impl"
+
     buildTypes {
         all {
             val config = file("$rootDir/api-config.properties")

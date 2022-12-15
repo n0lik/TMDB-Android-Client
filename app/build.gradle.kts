@@ -3,6 +3,7 @@ plugins {
 }
 
 android {
+    namespace = "com.n0lik.sample"
     defaultConfig {
         applicationId = "com.n0lik.sample"
     }
