@@ -2,6 +2,10 @@ plugins {
     id("android-library-convention")
 }
 
+android {
+    namespace = "com.n0lik.sample.movie.api"
+}
+
 dependencies {
 
     implementation(project(":common-api"))

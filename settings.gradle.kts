@@ -37,11 +37,9 @@ pluginManagement {
         eachPlugin {
             val pluginId = requested.id.id
             when {
-                pluginId.contains("kotlin-dsl") -> useVersion("1.6.10")
-                pluginId.startsWith("org.jetbrains.kotlin") -> useVersion("1.6.10")
-                pluginId.startsWith("com.android.") -> useVersion("7.2.1")
-                pluginId == "io.gitlab.arturbosch.detekt" ->
-                    useModule("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.20.0")
+                pluginId.startsWith("org.jetbrains.kotlin") -> useVersion("1.7.22")
+                pluginId.startsWith("com.android.") -> useVersion("7.3.1")
+                pluginId == "io.gitlab.arturbosch.detekt" -> useVersion("1.22.0")
             }
         }
     }
